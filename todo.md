@@ -35,3 +35,6 @@
 - [x] Superbox özelliklerini ekleme (Alt yapı derdi yok, Tek priz yeterli, 12 ay sabit fiyat, Aşım derdi yok)
 - [x] Tüm başvuru butonlarını WhatsApp mesaj gönderecek şekilde güncelleme
 - [x] Diğer sayfalardaki (Telefonlar, Paketler, Aksesuarlar) butonları da WhatsApp'a yönlendirme
+- [x] Superbox WhatsApp başvuru butonlarına bilgi formu modalı ekleme (isim, telefon, adres)
+- [x] Form doldurulduktan sonra bilgilerle birlikte WhatsApp mesajı gönderme
+- [x] SEO: Ana sayfada alt metin eksik olan görseli düzeltme

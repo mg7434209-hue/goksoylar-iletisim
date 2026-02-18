@@ -54,7 +54,7 @@ export default function Home() {
       {/* ===== HERO SECTION ===== */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
-          <img src={HERO_IMG} alt="" className="w-full h-full object-cover" />
+          <img src={HERO_IMG} alt="Göksoylar İletişim - Türkcell Yetkili Bayi Mağazası" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#004899]/90 via-[#004899]/75 to-[#004899]/40" />
         </div>
         <div className="relative container py-20 lg:py-32">

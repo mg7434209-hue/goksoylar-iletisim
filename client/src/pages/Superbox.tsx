@@ -1,7 +1,8 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { trpc } from "@/lib/trpc";
 import {
-  Wifi, Zap, Shield, Clock, CheckCircle, Loader2, MessageCircle, Phone
+  Wifi, Zap, Shield, Clock, CheckCircle, Loader2, MessageCircle, Phone, X, User, MapPin
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -25,7 +26,6 @@ const features = [
   { icon: CheckCircle, text: "Aşım Derdi Yok", desc: "Kotanız bitince hız düşer" },
 ];
 
-// Gradient renkleri her paket kartı için
 const cardGradients = [
   "from-blue-500 to-blue-700",
   "from-red-500 to-red-700",
@@ -40,28 +40,220 @@ const cardBorders = [
   "border-amber-200 hover:border-amber-400",
 ];
 
-function getWhatsAppUrl(pkgName: string, quota: string, price: number) {
-  const message = encodeURIComponent(
-    `Merhaba, Göksoylar İletişim'den *${pkgName}* hakkında bilgi almak istiyorum.\n\n📦 Paket: ${pkgName}\n📶 Kota: ${quota}\n💰 Fiyat: ${price.toLocaleString("tr-TR")} TL/ay\n⏱ Taahhüt: 12 Ay\n\nBaşvuru yapmak istiyorum.`
+/* ===== BAŞVURU FORMU MODALI ===== */
+function ApplicationModal({
+  isOpen,
+  onClose,
+  selectedPackage,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  selectedPackage: { name: string; quota: string; price: number } | null;
+}) {
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    address: "",
+  });
+  const [errors, setErrors] = useState<{ name?: string; phone?: string; address?: string }>({});
+
+  const validate = () => {
+    const newErrors: { name?: string; phone?: string; address?: string } = {};
+    if (!formData.name.trim()) newErrors.name = "İsim alanı zorunludur";
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Telefon numarası zorunludur";
+    } else if (!/^[0-9\s\-\+\(\)]{10,15}$/.test(formData.phone.trim())) {
+      newErrors.phone = "Geçerli bir telefon numarası giriniz";
+    }
+    if (!formData.address.trim()) newErrors.address = "Adres alanı zorunludur";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    if (!validate() || !selectedPackage) return;
+
+    const message = encodeURIComponent(
+      `Merhaba, Göksoylar İletişim'den *${selectedPackage.name}* için başvuru yapmak istiyorum.\n\n` +
+      `📦 Paket: ${selectedPackage.name}\n` +
+      `📶 Kota: ${selectedPackage.quota}\n` +
+      `💰 Fiyat: ${selectedPackage.price.toLocaleString("tr-TR")} TL/ay\n` +
+      `⏱ Taahhüt: 12 Ay\n\n` +
+      `👤 İsim: ${formData.name}\n` +
+      `📞 Telefon: ${formData.phone}\n` +
+      `📍 Adres: ${formData.address}`
+    );
+
+    window.open(`https://wa.me/905349777000?text=${message}`, "_blank");
+    onClose();
+    setFormData({ name: "", phone: "", address: "" });
+    setErrors({});
+  };
+
+  const handleClose = () => {
+    onClose();
+    setFormData({ name: "", phone: "", address: "" });
+    setErrors({});
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={handleClose}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+          {/* Modal */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#004899] to-[#002244] px-6 py-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-white font-bold text-lg font-[Poppins]">Superbox Başvuru</h3>
+                  {selectedPackage && (
+                    <p className="text-white/70 text-sm mt-0.5">
+                      {selectedPackage.name} - {selectedPackage.quota} - {selectedPackage.price.toLocaleString("tr-TR")} TL/ay
+                    </p>
+                  )}
+                </div>
+                <button
+                  onClick={handleClose}
+                  className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center hover:bg-white/25 transition-colors"
+                >
+                  <X className="w-4 h-4 text-white" />
+                </button>
+              </div>
+            </div>
+
+            {/* Form */}
+            <div className="px-6 py-6 space-y-4">
+              <p className="text-gray-500 text-sm mb-2">
+                Bilgilerinizi doldurun, WhatsApp üzerinden başvurunuzu iletelim.
+              </p>
+
+              {/* İsim */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <span className="flex items-center gap-1.5">
+                    <User className="w-4 h-4 text-[#004899]" />
+                    Ad Soyad
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Adınız ve soyadınız"
+                  value={formData.name}
+                  onChange={(e) => {
+                    setFormData({ ...formData, name: e.target.value });
+                    if (errors.name) setErrors({ ...errors, name: undefined });
+                  }}
+                  className={`w-full px-4 py-3 rounded-xl border ${
+                    errors.name ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50"
+                  } focus:outline-none focus:ring-2 focus:ring-[#004899]/30 focus:border-[#004899] transition-all text-sm`}
+                />
+                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+              </div>
+
+              {/* Telefon */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <span className="flex items-center gap-1.5">
+                    <Phone className="w-4 h-4 text-[#004899]" />
+                    Telefon Numarası
+                  </span>
+                </label>
+                <input
+                  type="tel"
+                  placeholder="05XX XXX XX XX"
+                  value={formData.phone}
+                  onChange={(e) => {
+                    setFormData({ ...formData, phone: e.target.value });
+                    if (errors.phone) setErrors({ ...errors, phone: undefined });
+                  }}
+                  className={`w-full px-4 py-3 rounded-xl border ${
+                    errors.phone ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50"
+                  } focus:outline-none focus:ring-2 focus:ring-[#004899]/30 focus:border-[#004899] transition-all text-sm`}
+                />
+                {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+              </div>
+
+              {/* Adres */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-[#004899]" />
+                    Adres
+                  </span>
+                </label>
+                <textarea
+                  placeholder="Kurulum yapılacak adresiniz"
+                  rows={3}
+                  value={formData.address}
+                  onChange={(e) => {
+                    setFormData({ ...formData, address: e.target.value });
+                    if (errors.address) setErrors({ ...errors, address: undefined });
+                  }}
+                  className={`w-full px-4 py-3 rounded-xl border ${
+                    errors.address ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50"
+                  } focus:outline-none focus:ring-2 focus:ring-[#004899]/30 focus:border-[#004899] transition-all text-sm resize-none`}
+                />
+                {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
+              </div>
+
+              {/* Submit Button */}
+              <button
+                onClick={handleSubmit}
+                className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold py-3.5 rounded-xl hover:bg-[#20bd5a] transition-all shadow-lg shadow-[#25D366]/25 text-sm mt-2"
+              >
+                <MessageCircle className="w-5 h-5" />
+                WhatsApp ile Gönder
+              </button>
+
+              <p className="text-gray-400 text-[11px] text-center">
+                Bilgileriniz sadece başvuru amacıyla kullanılacaktır.
+              </p>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
-  return `https://wa.me/905349777000?text=${message}`;
 }
 
+/* ===== ANA SAYFA ===== */
 export default function Superbox() {
   const { data: superboxList, isLoading } = trpc.superbox.list.useQuery();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPkg, setSelectedPkg] = useState<{ name: string; quota: string; price: number } | null>(null);
+
+  const openModal = (pkg: any) => {
+    setSelectedPkg({ name: pkg.name, quota: pkg.quota, price: pkg.price });
+    setModalOpen(true);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
 
-      {/* Hero Section - Görseldeki tasarıma uygun */}
+      {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#0a1628] via-[#0d2147] to-[#1a0a3e]">
-        {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-20 left-10 w-64 h-64 bg-yellow-400/10 rounded-full blur-[100px]" />
           <div className="absolute bottom-10 right-20 w-80 h-80 bg-blue-500/15 rounded-full blur-[120px]" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/10 rounded-full blur-[150px]" />
-          {/* Stars */}
           {[...Array(20)].map((_, i) => (
             <div
               key={i}
@@ -77,7 +269,6 @@ export default function Superbox() {
 
         <div className="relative container py-16 lg:py-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left - Text Content */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -99,7 +290,6 @@ export default function Superbox() {
                 Fiber altyapı gerektirmeden, sadece bir prize takarak evinizde yüksek hızlı internet deneyimi yaşayın. 12 ay sabit fiyat garantisi ile.
               </p>
 
-              {/* Feature Pills */}
               <div className="grid grid-cols-2 gap-3 mb-8">
                 {features.map((f, i) => (
                   <motion.div
@@ -120,18 +310,18 @@ export default function Superbox() {
                 ))}
               </div>
 
-              <a
-                href="https://wa.me/905349777000?text=Merhaba%2C%20Superbox%20paketleri%20hakkında%20bilgi%20almak%20istiyorum."
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => {
+                  setSelectedPkg(null);
+                  setModalOpen(true);
+                }}
                 className="inline-flex items-center gap-2 bg-[#25D366] text-white font-bold px-7 py-3.5 rounded-xl hover:bg-[#20bd5a] transition-all shadow-lg shadow-[#25D366]/30 text-sm"
               >
                 <MessageCircle className="w-5 h-5" />
                 WhatsApp ile Bilgi Al
-              </a>
+              </button>
             </motion.div>
 
-            {/* Right - Banner Image */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -147,7 +337,6 @@ export default function Superbox() {
           </div>
         </div>
 
-        {/* Wave Bottom */}
         <div className="absolute bottom-0 left-0 right-0">
           <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
             <path d="M0 40L60 35C120 30 240 20 360 25C480 30 600 50 720 55C840 60 960 50 1080 40C1200 30 1320 20 1380 15L1440 10V80H0V40Z" fill="white" />
@@ -186,7 +375,7 @@ export default function Superbox() {
             >
               {superboxList?.map((pkg: any, index: number) => (
                 <motion.div key={pkg.id} variants={fadeInUp}>
-                  <SuperboxCard pkg={pkg} index={index} />
+                  <SuperboxCard pkg={pkg} index={index} onApply={openModal} />
                 </motion.div>
               ))}
             </motion.div>
@@ -241,18 +430,19 @@ export default function Superbox() {
             Hemen Başvurun
           </h2>
           <p className="text-white/70 max-w-lg mx-auto mb-8">
-            Superbox başvurunuz için WhatsApp üzerinden bize ulaşın veya mağazamızı ziyaret edin.
+            Superbox başvurunuz için bilgi formunu doldurun, WhatsApp üzerinden size ulaşalım.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="https://wa.me/905349777000?text=Merhaba%2C%20Superbox%20paketleri%20hakkında%20bilgi%20almak%20istiyorum."
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={() => {
+                setSelectedPkg(null);
+                setModalOpen(true);
+              }}
               className="inline-flex items-center gap-2 bg-[#25D366] text-white font-bold px-7 py-3.5 rounded-xl hover:bg-[#20bd5a] transition-all shadow-lg text-sm"
             >
               <MessageCircle className="w-5 h-5" />
               WhatsApp ile Başvur
-            </a>
+            </button>
             <a
               href="tel:+905349777000"
               className="inline-flex items-center gap-2 bg-[#FFD200] text-[#004899] font-bold px-7 py-3.5 rounded-xl hover:bg-yellow-300 transition-all shadow-lg text-sm"
@@ -265,14 +455,20 @@ export default function Superbox() {
       </section>
 
       <Footer />
+
+      {/* Başvuru Formu Modalı */}
+      <ApplicationModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        selectedPackage={selectedPkg}
+      />
     </div>
   );
 }
 
 /* ===== SUPERBOX CARD ===== */
-function SuperboxCard({ pkg, index }: { pkg: any; index: number }) {
+function SuperboxCard({ pkg, index, onApply }: { pkg: any; index: number; onApply: (pkg: any) => void }) {
   const gradientIdx = index % cardGradients.length;
-  const whatsappUrl = getWhatsAppUrl(pkg.name, pkg.quota, pkg.price);
 
   return (
     <div className={`relative bg-white rounded-2xl overflow-hidden border-2 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
@@ -304,7 +500,6 @@ function SuperboxCard({ pkg, index }: { pkg: any; index: number }) {
 
       {/* Details */}
       <div className="px-6 pt-6 pb-6">
-        {/* Features */}
         <div className="space-y-3 mb-6">
           {[
             "Alt yapı derdi yok",
@@ -330,11 +525,9 @@ function SuperboxCard({ pkg, index }: { pkg: any; index: number }) {
           <p className="text-gray-400 text-xs mt-1">12 Ay Taahhüt</p>
         </div>
 
-        {/* WhatsApp CTA */}
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+        {/* WhatsApp CTA - Form açar */}
+        <button
+          onClick={() => onApply(pkg)}
           className={`w-full flex items-center justify-center gap-2 text-sm font-bold py-3 rounded-xl transition-all ${
             pkg.popular
               ? "bg-[#25D366] text-white hover:bg-[#20bd5a] shadow-lg shadow-[#25D366]/25"
@@ -343,7 +536,7 @@ function SuperboxCard({ pkg, index }: { pkg: any; index: number }) {
         >
           <MessageCircle className="w-4 h-4" />
           WhatsApp ile Başvur
-        </a>
+        </button>
       </div>
     </div>
   );
