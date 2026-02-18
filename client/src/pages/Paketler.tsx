@@ -144,10 +144,10 @@ export default function Paketler() {
               Doğru paketi seçmek için mağazamızı ziyaret edebilir veya bizi arayabilirsiniz. Uzman ekibimiz ihtiyacınıza en uygun Türkcell tarifesini bulmanıza yardımcı olacaktır.
             </p>
             <a
-              href="tel:+905001234567"
+              href="tel:+905349777000"
               className="inline-flex items-center gap-2 bg-[#004899] text-white font-bold px-7 py-3.5 rounded-xl hover:bg-[#003570] transition-all text-sm"
             >
-              Bizi Arayın: 0500 123 45 67
+              Bizi Arayın: 0534 977 70 00
             </a>
           </div>
         </div>

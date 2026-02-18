@@ -355,11 +355,11 @@ export default function Home() {
                   Bize Ulaşın
                 </Link>
                 <a
-                  href="tel:+905001234567"
+                  href="tel:+905349777000"
                   className="inline-flex items-center gap-2 bg-[#FFD200] text-[#004899] font-bold px-7 py-3.5 rounded-xl hover:bg-yellow-300 transition-all shadow-lg text-sm"
                 >
                   <Globe className="w-5 h-5" />
-                  0500 123 45 67
+                  0534 977 70 00
                 </a>
               </motion.div>
             </motion.div>

@@ -27,9 +27,9 @@ export default function Navbar() {
       <div className="bg-[#004899] text-white text-sm py-2">
         <div className="container flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <a href="tel:+905001234567" className="flex items-center gap-1.5 hover:text-[#FFD200] transition-colors">
+            <a href="tel:+905349777000" className="flex items-center gap-1.5 hover:text-[#FFD200] transition-colors">
               <Phone className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">0500 123 45 67</span>
+              <span className="hidden sm:inline">0534 977 70 00</span>
             </a>
             <span className="hidden md:inline text-white/60">|</span>
             <span className="hidden md:inline text-white/80">Türkcell Yetkili Bayi</span>

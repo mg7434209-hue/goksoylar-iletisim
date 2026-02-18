@@ -87,9 +87,9 @@ export default function Iletisim() {
                   {
                     icon: Phone,
                     title: "Telefon",
-                    content: "0500 123 45 67",
+                    content: "0534 977 70 00",
                     sub: "Hafta içi ve Cumartesi günleri arayabilirsiniz.",
-                    href: "tel:+905001234567",
+                    href: "tel:+905349777000",
                   },
                   {
                     icon: Mail,
@@ -134,7 +134,7 @@ export default function Iletisim() {
                   Hızlı yanıt için WhatsApp üzerinden bize mesaj gönderebilirsiniz.
                 </p>
                 <a
-                  href="https://wa.me/905001234567"
+                  href="https://wa.me/905349777000"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-green-600 text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-green-700 transition-colors text-sm"
