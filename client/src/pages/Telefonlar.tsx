@@ -5,7 +5,8 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
-import { phones, phoneBrands, formatPrice } from "@/lib/data";
+import { phones as staticPhones, phoneBrands as staticBrands, formatPrice } from "@/lib/data";
+import { trpc } from "@/lib/trpc";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -14,15 +15,19 @@ const PHONES_IMG = "https://private-us-east-1.manuscdn.com/sessionFile/tQpG3h77L
 type SortOption = "default" | "price-asc" | "price-desc";
 
 export default function Telefonlar() {
+  const { data: dbPhones } = trpc.phones.list.useQuery();
+  const phones = dbPhones && dbPhones.length > 0 ? dbPhones : staticPhones;
+  const phoneBrands = useMemo(() => ["Tümü", ...Array.from(new Set(phones.map((p: any) => p.brand)))], [phones]);
+
   const [brand, setBrand] = useState("Tümü");
   const [sort, setSort] = useState<SortOption>("default");
 
   const filtered = useMemo(() => {
-    let list = brand === "Tümü" ? [...phones] : phones.filter((p) => p.brand === brand);
-    if (sort === "price-asc") list.sort((a, b) => a.price - b.price);
-    if (sort === "price-desc") list.sort((a, b) => b.price - a.price);
+    let list = brand === "Tümü" ? [...phones] : phones.filter((p: any) => p.brand === brand);
+    if (sort === "price-asc") list.sort((a: any, b: any) => a.price - b.price);
+    if (sort === "price-desc") list.sort((a: any, b: any) => b.price - a.price);
     return list;
-  }, [brand, sort]);
+  }, [brand, sort, phones]);
 
   return (
     <div className="min-h-screen flex flex-col">

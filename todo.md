@@ -1,0 +1,26 @@
+# Project TODO
+
+- [x] Basic homepage layout
+- [x] Navigation menu (Navbar)
+- [x] Footer component
+- [x] Telefonlar sayfası
+- [x] Türkcell Paketler sayfası
+- [x] Aksesuarlar sayfası
+- [x] Hakkımızda sayfası
+- [x] İletişim sayfası
+- [x] Telefon numarası güncelleme (0534 977 70 00)
+- [x] Adres güncelleme (Manavgat / Antalya)
+- [x] Veritabanı şeması oluşturma (phones, packages, accessories tabloları)
+- [x] Veritabanı migration çalıştırma
+- [x] Seed data - mevcut verileri veritabanına aktarma
+- [x] Backend API - Telefon CRUD endpoint'leri
+- [x] Backend API - Paket CRUD endpoint'leri
+- [x] Backend API - Aksesuar CRUD endpoint'leri
+- [x] Admin paneli - Dashboard sayfası
+- [x] Admin paneli - Telefon yönetimi (ekleme, düzenleme, silme)
+- [x] Admin paneli - Paket yönetimi (ekleme, düzenleme, silme)
+- [x] Admin paneli - Aksesuar yönetimi (ekleme, düzenleme, silme)
+- [x] Admin paneli - Yetkilendirme (sadece admin rolü)
+- [x] Frontend sayfalarını veritabanından veri çekecek şekilde güncelleme
+- [x] Home.tsx conflict çözümü (upgrade sonrası)
+- [x] Test yazma (17 test geçti)

@@ -3,14 +3,15 @@
  * Design: Digital Wave - Turkcell Blue/Yellow, dalga geçişleri, glassmorphism kartlar
  * Font: Poppins (başlıklar), DM Sans (gövde)
  */
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import {
   Smartphone, Wifi, Shield, Truck, ChevronRight,
   Signal, MessageSquare, Globe, Star, ArrowRight
 } from "lucide-react";
-import { phones, turkcellPackages, accessories, formatPrice } from "@/lib/data";
+import { phones as staticPhones, turkcellPackages as staticPackages, accessories as staticAccessories, formatPrice } from "@/lib/data";
+import { trpc } from "@/lib/trpc";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -33,10 +34,18 @@ const staggerContainer = {
 };
 
 export default function Home() {
-  const [pkgFilter, setPkgFilter] = useState<"faturali" | "genç">("faturali");
+  const { data: dbPhones } = trpc.phones.list.useQuery();
+  const { data: dbPackages } = trpc.packages.list.useQuery();
+  const { data: dbAccessories } = trpc.accessories.list.useQuery();
+
+  const phones = dbPhones && dbPhones.length > 0 ? dbPhones : staticPhones;
+  const allPackages = dbPackages && dbPackages.length > 0 ? dbPackages : staticPackages;
+  const allAccessories = dbAccessories && dbAccessories.length > 0 ? dbAccessories : staticAccessories;
+
+  const [pkgFilter, setPkgFilter] = useState<"faturali" | "genc">("faturali");
   const featuredPhones = phones.slice(0, 4);
-  const filteredPackages = turkcellPackages.filter((p) => p.category === pkgFilter).slice(0, 4);
-  const featuredAccessories = accessories.slice(0, 4);
+  const filteredPackages = useMemo(() => allPackages.filter((p: any) => p.category === pkgFilter).slice(0, 4), [allPackages, pkgFilter]);
+  const featuredAccessories = allAccessories.slice(0, 4);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -177,7 +186,7 @@ export default function Home() {
               </p>
               {/* Filter Tabs */}
               <div className="inline-flex bg-white rounded-xl p-1.5 shadow-sm border border-gray-100">
-                {(["faturali", "genç"] as const).map((cat) => (
+                {(["faturali", "genc"] as const).map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setPkgFilter(cat)}
@@ -373,7 +382,7 @@ export default function Home() {
 }
 
 /* ===== PHONE CARD ===== */
-function PhoneCard({ phone }: { phone: typeof phones[0] }) {
+function PhoneCard({ phone }: { phone: any }) {
   return (
     <div className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:border-[#004899]/20 transition-all duration-300">
       <div className="relative p-4 pb-0">
@@ -416,7 +425,7 @@ function PhoneCard({ phone }: { phone: typeof phones[0] }) {
 }
 
 /* ===== PACKAGE CARD ===== */
-function PackageCard({ pkg }: { pkg: typeof turkcellPackages[0] }) {
+function PackageCard({ pkg }: { pkg: any }) {
   return (
     <div className={`relative bg-white rounded-2xl p-6 border transition-all duration-300 hover:shadow-xl ${
       pkg.popular ? "border-[#FFD200] shadow-lg ring-2 ring-[#FFD200]/30" : "border-gray-100 hover:border-[#004899]/20"
@@ -474,7 +483,7 @@ function PackageCard({ pkg }: { pkg: typeof turkcellPackages[0] }) {
 }
 
 /* ===== ACCESSORY CARD ===== */
-function AccessoryCard({ acc }: { acc: typeof accessories[0] }) {
+function AccessoryCard({ acc }: { acc: any }) {
   return (
     <div className="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300">
       <div className="aspect-square bg-gray-50 overflow-hidden">
