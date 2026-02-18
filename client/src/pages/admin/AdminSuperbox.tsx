@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, X, Check, Gift } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Check, Gift, Search, Wifi } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,14 +49,35 @@ const categoryColors: Record<string, string> = {
 export default function AdminSuperbox() {
   const utils = trpc.useUtils();
   const { data: superboxList, isLoading } = trpc.superbox.listAll.useQuery();
-  const createMutation = trpc.superbox.create.useMutation({ onSuccess: () => { utils.superbox.listAll.invalidate(); toast.success("Superbox paketi eklendi"); setOpen(false); } });
-  const updateMutation = trpc.superbox.update.useMutation({ onSuccess: () => { utils.superbox.listAll.invalidate(); toast.success("Superbox paketi güncellendi"); setOpen(false); } });
-  const deleteMutation = trpc.superbox.delete.useMutation({ onSuccess: () => { utils.superbox.listAll.invalidate(); toast.success("Superbox paketi silindi"); setDeleteId(null); } });
+  const createMutation = trpc.superbox.create.useMutation({
+    onSuccess: () => { utils.superbox.listAll.invalidate(); toast.success("Superbox paketi başarıyla eklendi"); setOpen(false); },
+    onError: (err) => { toast.error("Hata: " + (err.message || "Superbox paketi eklenemedi")); },
+  });
+  const updateMutation = trpc.superbox.update.useMutation({
+    onSuccess: () => { utils.superbox.listAll.invalidate(); toast.success("Superbox paketi başarıyla güncellendi"); setOpen(false); },
+    onError: (err) => { toast.error("Hata: " + (err.message || "Superbox paketi güncellenemedi")); },
+  });
+  const deleteMutation = trpc.superbox.delete.useMutation({
+    onSuccess: () => { utils.superbox.listAll.invalidate(); toast.success("Superbox paketi başarıyla silindi"); setDeleteId(null); },
+    onError: (err) => { toast.error("Hata: " + (err.message || "Superbox paketi silinemedi")); },
+  });
 
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
   const [form, setForm] = useState<SuperboxForm>(emptyForm);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredSuperbox = useMemo(() => {
+    if (!superboxList) return [];
+    if (!searchQuery.trim()) return superboxList;
+    const q = searchQuery.toLowerCase();
+    return superboxList.filter((s: any) =>
+      s.name.toLowerCase().includes(q) ||
+      (categoryLabels[s.category] || s.category).toLowerCase().includes(q) ||
+      s.quota.toLowerCase().includes(q)
+    );
+  }, [superboxList, searchQuery]);
 
   const openCreate = () => { setEditId(null); setForm(emptyForm); setOpen(true); };
   const openEdit = (pkg: any) => {
@@ -72,11 +93,12 @@ export default function AdminSuperbox() {
   };
 
   const handleSubmit = () => {
-    if (!form.name || !form.category || !form.quota || !form.price) {
-      toast.error("Lütfen zorunlu alanları doldurun");
-      return;
-    }
-    const slug = form.slug || form.name.toLowerCase().replace(/[^a-z0-9ğüşıöç]+/g, "-").replace(/(^-|-$)/g, "");
+    if (!form.name.trim()) { toast.error("Paket adı zorunludur"); return; }
+    if (!form.category.trim()) { toast.error("Kategori zorunludur"); return; }
+    if (!form.quota.trim()) { toast.error("Kota bilgisi zorunludur"); return; }
+    if (!form.price || form.price <= 0) { toast.error("Geçerli bir fiyat girin"); return; }
+
+    const slug = form.slug || form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     const data = {
       ...form,
       slug,
@@ -92,7 +114,7 @@ export default function AdminSuperbox() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 font-[Poppins]">Superbox Yönetimi</h1>
           <p className="text-gray-500 mt-1">{superboxList?.length ?? 0} paket kayıtlı</p>
@@ -102,8 +124,39 @@ export default function AdminSuperbox() {
         </Button>
       </div>
 
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Paket adı, kategori veya kota ile arayın..."
+          className="pl-10"
+        />
+      </div>
+
       {isLoading ? (
-        <div className="text-center py-12 text-gray-400">Yükleniyor...</div>
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8">
+          <div className="flex items-center justify-center gap-3 text-gray-400">
+            <div className="animate-spin w-5 h-5 border-2 border-gray-300 border-t-[#004899] rounded-full" />
+            Yükleniyor...
+          </div>
+        </div>
+      ) : filteredSuperbox.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-12 text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Wifi className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-1">
+            {searchQuery ? "Sonuç bulunamadı" : "Henüz Superbox paketi eklenmemiş"}
+          </h3>
+          <p className="text-gray-500 text-sm mb-4">
+            {searchQuery ? `"${searchQuery}" aramasına uygun paket bulunamadı.` : "İlk Superbox paketini eklemek için yukarıdaki butonu kullanın."}
+          </p>
+          {searchQuery && (
+            <Button variant="outline" size="sm" onClick={() => setSearchQuery("")}>Aramayı Temizle</Button>
+          )}
+        </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
@@ -121,7 +174,7 @@ export default function AdminSuperbox() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {superboxList?.map((pkg: any) => (
+                {filteredSuperbox.map((pkg: any) => (
                   <tr key={pkg.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
@@ -156,8 +209,8 @@ export default function AdminSuperbox() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="sm" onClick={() => openEdit(pkg)}><Pencil className="w-4 h-4" /></Button>
-                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => setDeleteId(pkg.id)}><Trash2 className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="sm" onClick={() => openEdit(pkg)} title="Düzenle"><Pencil className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => setDeleteId(pkg.id)} title="Sil"><Trash2 className="w-4 h-4" /></Button>
                       </div>
                     </td>
                   </tr>
@@ -165,6 +218,11 @@ export default function AdminSuperbox() {
               </tbody>
             </table>
           </div>
+          {searchQuery && (
+            <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 text-xs text-gray-500">
+              {filteredSuperbox.length} / {superboxList?.length} paket gösteriliyor
+            </div>
+          )}
         </div>
       )}
 
@@ -176,11 +234,11 @@ export default function AdminSuperbox() {
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
-              <Label>Paket Adı *</Label>
+              <Label>Paket Adı <span className="text-red-500">*</span></Label>
               <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Superbox Devam 500 GB" />
             </div>
             <div>
-              <Label>Kategori *</Label>
+              <Label>Kategori <span className="text-red-500">*</span></Label>
               <select
                 value={form.category}
                 onChange={e => setForm({ ...form, category: e.target.value })}
@@ -198,7 +256,7 @@ export default function AdminSuperbox() {
               <Input value={form.speed} onChange={e => setForm({ ...form, speed: e.target.value })} placeholder="4.5G" />
             </div>
             <div>
-              <Label>Kota *</Label>
+              <Label>Kota <span className="text-red-500">*</span></Label>
               <Input value={form.quota} onChange={e => setForm({ ...form, quota: e.target.value })} placeholder="500 GB, 1 TB..." />
             </div>
             <div>
@@ -206,7 +264,7 @@ export default function AdminSuperbox() {
               <Input value={form.commitment} onChange={e => setForm({ ...form, commitment: e.target.value })} placeholder="12 Ay" />
             </div>
             <div>
-              <Label>Fiyat (TL/ay) *</Label>
+              <Label>Fiyat (TL/ay) <span className="text-red-500">*</span></Label>
               <Input type="number" value={form.price || ""} onChange={e => setForm({ ...form, price: parseInt(e.target.value) || 0 })} />
             </div>
             <div>
@@ -258,7 +316,9 @@ export default function AdminSuperbox() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>İptal</AlertDialogCancel>
-            <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={() => deleteId && deleteMutation.mutate({ id: deleteId })}>Sil</AlertDialogAction>
+            <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={() => deleteId && deleteMutation.mutate({ id: deleteId })} disabled={deleteMutation.isPending}>
+              {deleteMutation.isPending ? "Siliniyor..." : "Sil"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

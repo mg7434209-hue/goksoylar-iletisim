@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, X, Check } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Check, Search, Package as PackageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,14 +38,34 @@ const categoryLabels: Record<string, string> = {
 export default function AdminPackages() {
   const utils = trpc.useUtils();
   const { data: packages, isLoading } = trpc.packages.listAll.useQuery();
-  const createMutation = trpc.packages.create.useMutation({ onSuccess: () => { utils.packages.listAll.invalidate(); toast.success("Paket eklendi"); setOpen(false); } });
-  const updateMutation = trpc.packages.update.useMutation({ onSuccess: () => { utils.packages.listAll.invalidate(); toast.success("Paket güncellendi"); setOpen(false); } });
-  const deleteMutation = trpc.packages.delete.useMutation({ onSuccess: () => { utils.packages.listAll.invalidate(); toast.success("Paket silindi"); setDeleteId(null); } });
+  const createMutation = trpc.packages.create.useMutation({
+    onSuccess: () => { utils.packages.listAll.invalidate(); toast.success("Paket başarıyla eklendi"); setOpen(false); },
+    onError: (err) => { toast.error("Hata: " + (err.message || "Paket eklenemedi")); },
+  });
+  const updateMutation = trpc.packages.update.useMutation({
+    onSuccess: () => { utils.packages.listAll.invalidate(); toast.success("Paket başarıyla güncellendi"); setOpen(false); },
+    onError: (err) => { toast.error("Hata: " + (err.message || "Paket güncellenemedi")); },
+  });
+  const deleteMutation = trpc.packages.delete.useMutation({
+    onSuccess: () => { utils.packages.listAll.invalidate(); toast.success("Paket başarıyla silindi"); setDeleteId(null); },
+    onError: (err) => { toast.error("Hata: " + (err.message || "Paket silinemedi")); },
+  });
 
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
   const [form, setForm] = useState<PackageForm>(emptyForm);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredPackages = useMemo(() => {
+    if (!packages) return [];
+    if (!searchQuery.trim()) return packages;
+    const q = searchQuery.toLowerCase();
+    return packages.filter((p: any) =>
+      p.name.toLowerCase().includes(q) ||
+      (categoryLabels[p.category] || p.category).toLowerCase().includes(q)
+    );
+  }, [packages, searchQuery]);
 
   const openCreate = () => { setEditId(null); setForm(emptyForm); setOpen(true); };
   const openEdit = (pkg: any) => {
@@ -60,10 +80,12 @@ export default function AdminPackages() {
   };
 
   const handleSubmit = () => {
-    if (!form.name || !form.internet || !form.minutes || !form.price) {
-      toast.error("Lütfen zorunlu alanları doldurun");
-      return;
-    }
+    if (!form.name.trim()) { toast.error("Paket adı zorunludur"); return; }
+    if (!form.internet.trim()) { toast.error("İnternet bilgisi zorunludur"); return; }
+    if (!form.minutes.trim()) { toast.error("Dakika bilgisi zorunludur"); return; }
+    if (!form.sms.trim()) { toast.error("SMS bilgisi zorunludur"); return; }
+    if (!form.price || form.price <= 0) { toast.error("Geçerli bir fiyat girin"); return; }
+
     const slug = form.slug || form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     const data = { ...form, slug, features: form.features || undefined };
     if (editId) {
@@ -75,7 +97,7 @@ export default function AdminPackages() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 font-[Poppins]">Paket Yönetimi</h1>
           <p className="text-gray-500 mt-1">{packages?.length ?? 0} paket kayıtlı</p>
@@ -85,8 +107,39 @@ export default function AdminPackages() {
         </Button>
       </div>
 
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Paket adı veya kategori ile arayın..."
+          className="pl-10"
+        />
+      </div>
+
       {isLoading ? (
-        <div className="text-center py-12 text-gray-400">Yükleniyor...</div>
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8">
+          <div className="flex items-center justify-center gap-3 text-gray-400">
+            <div className="animate-spin w-5 h-5 border-2 border-gray-300 border-t-[#004899] rounded-full" />
+            Yükleniyor...
+          </div>
+        </div>
+      ) : filteredPackages.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-12 text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <PackageIcon className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-1">
+            {searchQuery ? "Sonuç bulunamadı" : "Henüz paket eklenmemiş"}
+          </h3>
+          <p className="text-gray-500 text-sm mb-4">
+            {searchQuery ? `"${searchQuery}" aramasına uygun paket bulunamadı.` : "İlk paketi eklemek için yukarıdaki butonu kullanın."}
+          </p>
+          {searchQuery && (
+            <Button variant="outline" size="sm" onClick={() => setSearchQuery("")}>Aramayı Temizle</Button>
+          )}
+        </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
@@ -104,7 +157,7 @@ export default function AdminPackages() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {packages?.map((pkg) => (
+                {filteredPackages.map((pkg: any) => (
                   <tr key={pkg.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
@@ -130,8 +183,8 @@ export default function AdminPackages() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="sm" onClick={() => openEdit(pkg)}><Pencil className="w-4 h-4" /></Button>
-                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => setDeleteId(pkg.id)}><Trash2 className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="sm" onClick={() => openEdit(pkg)} title="Düzenle"><Pencil className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => setDeleteId(pkg.id)} title="Sil"><Trash2 className="w-4 h-4" /></Button>
                       </div>
                     </td>
                   </tr>
@@ -139,6 +192,11 @@ export default function AdminPackages() {
               </tbody>
             </table>
           </div>
+          {searchQuery && (
+            <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 text-xs text-gray-500">
+              {filteredPackages.length} / {packages?.length} paket gösteriliyor
+            </div>
+          )}
         </div>
       )}
 
@@ -150,11 +208,11 @@ export default function AdminPackages() {
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
-              <Label>Paket Adı *</Label>
+              <Label>Paket Adı <span className="text-red-500">*</span></Label>
               <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Star+ 15 GB" />
             </div>
             <div>
-              <Label>Kategori *</Label>
+              <Label>Kategori <span className="text-red-500">*</span></Label>
               <Select value={form.category} onValueChange={(v: any) => setForm({ ...form, category: v })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -169,24 +227,25 @@ export default function AdminPackages() {
               <Input value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} placeholder="Otomatik oluşturulur" />
             </div>
             <div>
-              <Label>İnternet *</Label>
+              <Label>İnternet <span className="text-red-500">*</span></Label>
               <Input value={form.internet} onChange={e => setForm({ ...form, internet: e.target.value })} placeholder="15 GB" />
             </div>
             <div>
-              <Label>Dakika *</Label>
+              <Label>Dakika <span className="text-red-500">*</span></Label>
               <Input value={form.minutes} onChange={e => setForm({ ...form, minutes: e.target.value })} placeholder="1000 dk" />
             </div>
             <div>
-              <Label>SMS *</Label>
+              <Label>SMS <span className="text-red-500">*</span></Label>
               <Input value={form.sms} onChange={e => setForm({ ...form, sms: e.target.value })} placeholder="250 SMS" />
             </div>
             <div>
-              <Label>Fiyat (TL/ay) *</Label>
+              <Label>Fiyat (TL/ay) <span className="text-red-500">*</span></Label>
               <Input type="number" value={form.price || ""} onChange={e => setForm({ ...form, price: parseInt(e.target.value) || 0 })} />
             </div>
             <div className="col-span-2">
               <Label>Özellikler (JSON dizi)</Label>
               <Input value={form.features} onChange={e => setForm({ ...form, features: e.target.value })} placeholder='["BiP ücretsiz", "TV+ dahil"]' />
+              <p className="text-xs text-gray-400 mt-1">Virgülle ayrılmış JSON dizi formatında girin</p>
             </div>
             <div>
               <Label>Sıralama</Label>
@@ -221,7 +280,9 @@ export default function AdminPackages() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>İptal</AlertDialogCancel>
-            <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={() => deleteId && deleteMutation.mutate({ id: deleteId })}>Sil</AlertDialogAction>
+            <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={() => deleteId && deleteMutation.mutate({ id: deleteId })} disabled={deleteMutation.isPending}>
+              {deleteMutation.isPending ? "Siliniyor..." : "Sil"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
