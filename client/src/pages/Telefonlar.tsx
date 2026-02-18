@@ -4,7 +4,7 @@
  */
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import { SlidersHorizontal, ArrowUpDown, MessageCircle } from "lucide-react";
 import { phones as staticPhones, phoneBrands as staticBrands, formatPrice } from "@/lib/data";
 import { trpc } from "@/lib/trpc";
 import Navbar from "@/components/Navbar";
@@ -126,9 +126,15 @@ export default function Telefonlar() {
                         </span>
                       )}
                     </div>
-                    <button className="w-full mt-3 bg-[#004899] text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-[#003570] transition-colors">
-                      Sepete Ekle
-                    </button>
+                    <a
+                      href={`https://wa.me/905349777000?text=${encodeURIComponent(`Merhaba, Göksoylar İletişim'den *${phone.name}* hakkında bilgi almak istiyorum.\n\n📱 Telefon: ${phone.name}\n💾 Depolama: ${phone.storage}\n🎨 Renk: ${phone.color}\n💰 Fiyat: ${formatPrice(phone.price)}\n\nSatın almak istiyorum.`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full mt-3 bg-[#25D366] text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-[#20bd5a] transition-colors flex items-center justify-center gap-2"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      WhatsApp ile Sipariş
+                    </a>
                   </div>
                 </div>
               </motion.div>

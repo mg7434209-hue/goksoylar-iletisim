@@ -8,7 +8,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import {
   Smartphone, Wifi, Shield, Truck, ChevronRight,
-  Signal, MessageSquare, Globe, Star, ArrowRight
+  Signal, MessageSquare, Globe, Star, ArrowRight, MessageCircle
 } from "lucide-react";
 import { phones as staticPhones, turkcellPackages as staticPackages, accessories as staticAccessories, formatPrice } from "@/lib/data";
 import { trpc } from "@/lib/trpc";
@@ -356,13 +356,15 @@ export default function Home() {
                 Numara taşıma, yeni hat veya cihaz alımı için mağazamızı ziyaret edin veya bizi arayın.
               </motion.p>
               <motion.div variants={fadeInUp} className="flex flex-wrap justify-center gap-4">
-                <Link
-                  href="/iletisim"
-                  className="inline-flex items-center gap-2 bg-[#004899] text-white font-bold px-7 py-3.5 rounded-xl hover:bg-[#003570] transition-all shadow-lg text-sm"
+                <a
+                  href="https://wa.me/905349777000?text=Merhaba%2C%20G%C3%B6ksoylar%20%C4%B0leti%C5%9Fim'den%20bilgi%20almak%20istiyorum."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-[#25D366] text-white font-bold px-7 py-3.5 rounded-xl hover:bg-[#20bd5a] transition-all shadow-lg text-sm"
                 >
-                  <MessageSquare className="w-5 h-5" />
-                  Bize Ulaşın
-                </Link>
+                  <MessageCircle className="w-5 h-5" />
+                  WhatsApp ile Ulaşın
+                </a>
                 <a
                   href="tel:+905349777000"
                   className="inline-flex items-center gap-2 bg-[#FFD200] text-[#004899] font-bold px-7 py-3.5 rounded-xl hover:bg-yellow-300 transition-all shadow-lg text-sm"
@@ -416,9 +418,15 @@ function PhoneCard({ phone }: { phone: any }) {
             </span>
           )}
         </div>
-        <button className="w-full mt-3 bg-[#004899] text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-[#003570] transition-colors">
-          Sepete Ekle
-        </button>
+        <a
+          href={`https://wa.me/905349777000?text=${encodeURIComponent(`Merhaba, Göksoylar İletişim'den *${phone.name}* hakkında bilgi almak istiyorum.\n\n📱 Telefon: ${phone.name}\n💾 Depolama: ${phone.storage}\n🎨 Renk: ${phone.color}\n💰 Fiyat: ${formatPrice(phone.price)}\n\nSatın almak istiyorum.`)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full mt-3 bg-[#25D366] text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-[#20bd5a] transition-colors flex items-center justify-center gap-2"
+        >
+          <MessageCircle className="w-4 h-4" />
+          WhatsApp ile Sipariş
+        </a>
       </div>
     </div>
   );
@@ -470,13 +478,19 @@ function PackageCard({ pkg }: { pkg: any }) {
           <span className="text-3xl font-extrabold text-[#004899] font-[Poppins]">{pkg.price}</span>
           <span className="text-gray-500 text-sm mb-1">TL/ay</span>
         </div>
-        <button className={`w-full text-sm font-semibold py-2.5 rounded-xl transition-colors ${
-          pkg.popular
-            ? "bg-[#FFD200] text-[#004899] hover:bg-yellow-300"
-            : "bg-[#004899] text-white hover:bg-[#003570]"
-        }`}>
-          Hemen Başvur
-        </button>
+        <a
+          href={`https://wa.me/905349777000?text=${encodeURIComponent(`Merhaba, Göksoylar İletişim'den *${pkg.name}* hakkında bilgi almak istiyorum.\n\n📦 Paket: ${pkg.name}\n🌐 İnternet: ${pkg.internet}\n📞 Konuşma: ${pkg.minutes}\n💬 SMS: ${pkg.sms}\n💰 Fiyat: ${pkg.price} TL/ay\n\nBaşvuru yapmak istiyorum.`)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`w-full text-sm font-semibold py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2 ${
+            pkg.popular
+              ? "bg-[#25D366] text-white hover:bg-[#20bd5a]"
+              : "bg-[#004899] text-white hover:bg-[#003570]"
+          }`}
+        >
+          <MessageCircle className="w-4 h-4" />
+          WhatsApp ile Başvur
+        </a>
       </div>
     </div>
   );

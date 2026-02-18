@@ -30,3 +30,8 @@
 - [ ] Ana sayfaya Superbox bölümü ekleme
 - [x] Admin panelinde Superbox paketleri yönetimi
 - [x] Superbox testleri (22 test geçti)
+- [x] Superbox paketlerini 4 ana pakete sadeleştirme (150GB/690TL, 350GB/1000TL, 1000GB/1700TL, 2000GB/2800TL)
+- [x] Superbox sayfasını görseldeki tasarıma uygun yeniden tasarlama (Taşınabilir Ev İnterneti konsepti)
+- [x] Superbox özelliklerini ekleme (Alt yapı derdi yok, Tek priz yeterli, 12 ay sabit fiyat, Aşım derdi yok)
+- [x] Tüm başvuru butonlarını WhatsApp mesaj gönderecek şekilde güncelleme
+- [x] Diğer sayfalardaki (Telefonlar, Paketler, Aksesuarlar) butonları da WhatsApp'a yönlendirme

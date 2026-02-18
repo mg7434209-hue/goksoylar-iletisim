@@ -4,7 +4,7 @@
  */
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Globe, Signal, MessageSquare, Check, Sparkles } from "lucide-react";
+import { Globe, Signal, MessageSquare, Check, Sparkles, MessageCircle } from "lucide-react";
 import { turkcellPackages as staticPackages } from "@/lib/data";
 import { trpc } from "@/lib/trpc";
 import Navbar from "@/components/Navbar";
@@ -128,13 +128,19 @@ export default function Paketler() {
                       <span className="text-3xl font-extrabold text-[#004899] font-[Poppins]">{pkg.price}</span>
                       <span className="text-gray-500 text-sm mb-1">TL/ay</span>
                     </div>
-                    <button className={`w-full text-sm font-semibold py-3 rounded-xl transition-colors ${
-                      pkg.popular
-                        ? "bg-[#FFD200] text-[#004899] hover:bg-yellow-300"
-                        : "bg-[#004899] text-white hover:bg-[#003570]"
-                    }`}>
-                      Hemen Başvur
-                    </button>
+                    <a
+                      href={`https://wa.me/905349777000?text=${encodeURIComponent(`Merhaba, Göksoylar İletişim'den *${pkg.name}* hakkında bilgi almak istiyorum.\n\n📦 Paket: ${pkg.name}\n🌐 İnternet: ${pkg.internet}\n📞 Konuşma: ${pkg.minutes}\n💬 SMS: ${pkg.sms}\n💰 Fiyat: ${pkg.price} TL/ay\n\nBaşvuru yapmak istiyorum.`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`w-full text-sm font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 ${
+                        pkg.popular
+                          ? "bg-[#25D366] text-white hover:bg-[#20bd5a]"
+                          : "bg-[#004899] text-white hover:bg-[#003570]"
+                      }`}
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      WhatsApp ile Başvur
+                    </a>
                   </div>
                 </div>
               </motion.div>

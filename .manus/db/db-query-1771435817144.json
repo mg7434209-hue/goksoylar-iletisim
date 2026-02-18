@@ -1,0 +1,9 @@
+{
+  "query": "DELETE FROM superbox;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3HgUaDQoodZaYs7.01a11688bc71 --database 4DVJC8eN4zyPcYwaxCYWh6 --execute DELETE FROM superbox;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1593
+}

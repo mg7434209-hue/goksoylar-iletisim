@@ -2,6 +2,7 @@
  * Göksoylar İletişim - Aksesuarlar Sayfası
  */
 import { motion } from "framer-motion";
+import { MessageCircle } from "lucide-react";
 import { accessories as staticAccessories, formatPrice } from "@/lib/data";
 import { trpc } from "@/lib/trpc";
 import Navbar from "@/components/Navbar";
@@ -55,9 +56,15 @@ export default function Aksesuarlar() {
                     <p className="text-xs text-gray-400 mt-2">{acc.brand}</p>
                     <h3 className="text-sm font-semibold text-gray-800 mt-1 line-clamp-2">{acc.name}</h3>
                     <p className="text-lg font-bold text-[#004899] mt-2">{formatPrice(acc.price)}</p>
-                    <button className="w-full mt-3 bg-[#004899] text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-[#003570] transition-colors">
-                      Sepete Ekle
-                    </button>
+                    <a
+                      href={`https://wa.me/905349777000?text=${encodeURIComponent(`Merhaba, Göksoylar İletişim'den *${acc.name}* hakkında bilgi almak istiyorum.\n\n🎧 Ürün: ${acc.name}\n🏷 Marka: ${acc.brand}\n💰 Fiyat: ${formatPrice(acc.price)}\n\nSatın almak istiyorum.`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full mt-3 bg-[#25D366] text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-[#20bd5a] transition-colors flex items-center justify-center gap-2"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      WhatsApp ile Sipariş
+                    </a>
                   </div>
                 </div>
               </motion.div>
