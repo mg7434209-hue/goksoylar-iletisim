@@ -88,6 +88,13 @@ describe("Public API endpoints", () => {
     const result = await caller.accessories.list();
     expect(Array.isArray(result)).toBe(true);
   });
+
+  it("superbox.list is accessible without auth", async () => {
+    const ctx = createAnonymousContext();
+    const caller = appRouter.createCaller(ctx);
+    const result = await caller.superbox.list();
+    expect(Array.isArray(result)).toBe(true);
+  });
 });
 
 describe("Admin-only endpoints - access control", () => {
@@ -113,6 +120,34 @@ describe("Admin-only endpoints - access control", () => {
     const ctx = createUserContext();
     const caller = appRouter.createCaller(ctx);
     await expect(caller.accessories.listAll()).rejects.toThrow();
+  });
+
+  it("superbox.listAll rejects non-admin users", async () => {
+    const ctx = createUserContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.superbox.listAll()).rejects.toThrow();
+  });
+
+  it("superbox.create rejects non-admin users", async () => {
+    const ctx = createUserContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.superbox.create({
+        slug: "test-superbox",
+        name: "Test Superbox",
+        category: "devam",
+        speed: "4.5G",
+        quota: "500 GB",
+        commitment: "12 Ay",
+        price: 1250,
+      })
+    ).rejects.toThrow();
+  });
+
+  it("superbox.delete rejects non-admin users", async () => {
+    const ctx = createUserContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.superbox.delete({ id: 1 })).rejects.toThrow();
   });
 
   it("phones.create rejects non-admin users", async () => {
@@ -204,6 +239,13 @@ describe("Admin endpoints - admin access", () => {
     const ctx = createAdminContext();
     const caller = appRouter.createCaller(ctx);
     const result = await caller.accessories.listAll();
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it("superbox.listAll is accessible by admin", async () => {
+    const ctx = createAdminContext();
+    const caller = appRouter.createCaller(ctx);
+    const result = await caller.superbox.listAll();
     expect(Array.isArray(result)).toBe(true);
   });
 });

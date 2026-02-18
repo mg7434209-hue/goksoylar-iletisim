@@ -47,6 +47,7 @@ export default function Footer() {
                 {[
                   { href: "/telefonlar", label: "Cep Telefonları" },
                   { href: "/paketler", label: "Türkcell Paketler" },
+                  { href: "/superbox", label: "Superbox" },
                   { href: "/aksesuarlar", label: "Aksesuarlar" },
                   { href: "/hakkimizda", label: "Hakkımızda" },
                   { href: "/iletisim", label: "İletişim" },

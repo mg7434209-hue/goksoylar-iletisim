@@ -2,7 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { Button } from "@/components/ui/button";
 import {
-  LayoutDashboard, Smartphone, Package, Headphones,
+  LayoutDashboard, Smartphone, Package, Headphones, Wifi,
   LogOut, ArrowLeft, Menu, X
 } from "lucide-react";
 import { useState } from "react";
@@ -12,6 +12,7 @@ const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
   { icon: Smartphone, label: "Telefonlar", path: "/admin/telefonlar" },
   { icon: Package, label: "Paketler", path: "/admin/paketler" },
+  { icon: Wifi, label: "Superbox", path: "/admin/superbox" },
   { icon: Headphones, label: "Aksesuarlar", path: "/admin/aksesuarlar" },
 ];
 

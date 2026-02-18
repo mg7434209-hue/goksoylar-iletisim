@@ -24,3 +24,9 @@
 - [x] Frontend sayfalarını veritabanından veri çekecek şekilde güncelleme
 - [x] Home.tsx conflict çözümü (upgrade sonrası)
 - [x] Test yazma (17 test geçti)
+- [x] Veritabanına Superbox paketleri ekleme (19 paket)
+- [x] Superbox sayfası oluşturma (kategori filtreleri ile)
+- [x] Navbar ve footer'a Superbox bağlantısı ekleme
+- [ ] Ana sayfaya Superbox bölümü ekleme
+- [x] Admin panelinde Superbox paketleri yönetimi
+- [x] Superbox testleri (22 test geçti)

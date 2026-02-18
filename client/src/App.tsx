@@ -15,6 +15,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPhones from "./pages/admin/AdminPhones";
 import AdminPackages from "./pages/admin/AdminPackages";
 import AdminAccessories from "./pages/admin/AdminAccessories";
+import Superbox from "./pages/Superbox";
+import AdminSuperbox from "./pages/admin/AdminSuperbox";
 
 function Router() {
   return (
@@ -25,6 +27,7 @@ function Router() {
       <Route path="/aksesuarlar" component={Aksesuarlar} />
       <Route path="/hakkimizda" component={Hakkimizda} />
       <Route path="/iletisim" component={Iletisim} />
+      <Route path="/superbox" component={Superbox} />
       <Route path="/admin">
         <AdminLayout><AdminDashboard /></AdminLayout>
       </Route>
@@ -36,6 +39,9 @@ function Router() {
       </Route>
       <Route path="/admin/aksesuarlar">
         <AdminLayout><AdminAccessories /></AdminLayout>
+      </Route>
+      <Route path="/admin/superbox">
+        <AdminLayout><AdminSuperbox /></AdminLayout>
       </Route>
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

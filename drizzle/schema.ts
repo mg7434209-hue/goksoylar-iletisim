@@ -88,3 +88,28 @@ export const accessories = mysqlTable("accessories", {
 
 export type Accessory = typeof accessories.$inferSelect;
 export type InsertAccessory = typeof accessories.$inferInsert;
+
+/**
+ * Superbox packages table - Turkcell Superbox paketleri
+ */
+export const superbox = mysqlTable("superbox", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 128 }).notNull().unique(),
+  name: varchar("name", { length: 256 }).notNull(),
+  category: varchar("category", { length: 64 }).notNull(), // 5g-hazir, devam, calistir-devam, dijitale-ozel, 4-5g
+  speed: varchar("speed", { length: 32 }).notNull(), // 4.5G
+  quota: varchar("quota", { length: 32 }).notNull(), // 250 GB, 1 TB, etc.
+  commitment: varchar("commitment", { length: 32 }).notNull(), // 12 Ay
+  price: int("price").notNull(), // Monthly price in TL
+  bonus: varchar("bonus", { length: 128 }), // e.g. "50 GB Hediye"
+  bonusDetail: varchar("bonusDetail", { length: 256 }), // e.g. "12 Ay Boyunca Her Ay Hediye"
+  isOnlineExclusive: boolean("isOnlineExclusive").default(false).notNull(),
+  popular: boolean("popular").default(false).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Superbox = typeof superbox.$inferSelect;
+export type InsertSuperbox = typeof superbox.$inferInsert;

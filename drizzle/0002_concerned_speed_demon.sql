@@ -1,0 +1,20 @@
+CREATE TABLE `superbox` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`slug` varchar(128) NOT NULL,
+	`name` varchar(256) NOT NULL,
+	`category` varchar(64) NOT NULL,
+	`speed` varchar(32) NOT NULL,
+	`quota` varchar(32) NOT NULL,
+	`commitment` varchar(32) NOT NULL,
+	`price` int NOT NULL,
+	`bonus` varchar(128),
+	`bonusDetail` varchar(256),
+	`isOnlineExclusive` boolean NOT NULL DEFAULT false,
+	`popular` boolean NOT NULL DEFAULT false,
+	`isActive` boolean NOT NULL DEFAULT true,
+	`sortOrder` int NOT NULL DEFAULT 0,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `superbox_id` PRIMARY KEY(`id`),
+	CONSTRAINT `superbox_slug_unique` UNIQUE(`slug`)
+);

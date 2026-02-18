@@ -5,6 +5,7 @@ import {
   phones, InsertPhone,
   packages, InsertPackage,
   accessories, InsertAccessory,
+  superbox, InsertSuperbox,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -204,4 +205,41 @@ export async function deleteAccessory(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(accessories).where(eq(accessories.id, id));
+}
+
+// ============ SUPERBOX QUERIES ============
+
+export async function getAllSuperbox(activeOnly = false) {
+  const db = await getDb();
+  if (!db) return [];
+  if (activeOnly) {
+    return db.select().from(superbox).where(eq(superbox.isActive, true)).orderBy(asc(superbox.sortOrder), asc(superbox.price));
+  }
+  return db.select().from(superbox).orderBy(asc(superbox.sortOrder), asc(superbox.price));
+}
+
+export async function getSuperboxById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(superbox).where(eq(superbox.id, id)).limit(1);
+  return result[0];
+}
+
+export async function createSuperbox(data: InsertSuperbox) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(superbox).values(data);
+  return result[0].insertId;
+}
+
+export async function updateSuperbox(id: number, data: Partial<InsertSuperbox>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(superbox).set(data).where(eq(superbox.id, id));
+}
+
+export async function deleteSuperbox(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(superbox).where(eq(superbox.id, id));
 }

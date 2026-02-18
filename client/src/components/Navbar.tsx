@@ -12,6 +12,7 @@ const navLinks = [
   { href: "/", label: "Ana Sayfa" },
   { href: "/telefonlar", label: "Telefonlar" },
   { href: "/paketler", label: "Türkcell Paketler" },
+  { href: "/superbox", label: "Superbox" },
   { href: "/aksesuarlar", label: "Aksesuarlar" },
   { href: "/hakkimizda", label: "Hakkımızda" },
   { href: "/iletisim", label: "İletişim" },

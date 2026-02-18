@@ -7,6 +7,7 @@ import {
   getAllPhones, getPhoneById, createPhone, updatePhone, deletePhone,
   getAllPackages, getPackageById, createPackage, updatePackage, deletePackage,
   getAllAccessories, getAccessoryById, createAccessory, updateAccessory, deleteAccessory,
+  getAllSuperbox, getSuperboxById, createSuperbox, updateSuperbox, deleteSuperbox,
 } from "./db";
 
 // ============ VALIDATION SCHEMAS ============
@@ -51,6 +52,22 @@ const accessoryInput = z.object({
   price: z.number().int().positive(),
   image: z.string().min(1),
   brand: z.string().min(1),
+  isActive: z.boolean().optional(),
+  sortOrder: z.number().int().optional(),
+});
+
+const superboxInput = z.object({
+  slug: z.string().min(1),
+  name: z.string().min(1),
+  category: z.string().min(1),
+  speed: z.string().min(1),
+  quota: z.string().min(1),
+  commitment: z.string().min(1),
+  price: z.number().int().positive(),
+  bonus: z.string().nullable().optional(),
+  bonusDetail: z.string().nullable().optional(),
+  isOnlineExclusive: z.boolean().optional(),
+  popular: z.boolean().optional(),
   isActive: z.boolean().optional(),
   sortOrder: z.number().int().optional(),
 });
@@ -137,6 +154,31 @@ export const appRouter = router({
     }),
     delete: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
       await deleteAccessory(input.id);
+      return { success: true };
+    }),
+  }),
+
+  // ============ SUPERBOX ROUTES ============
+  superbox: router({
+    list: publicProcedure.query(async () => {
+      return getAllSuperbox(true);
+    }),
+    listAll: adminProcedure.query(async () => {
+      return getAllSuperbox(false);
+    }),
+    getById: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
+      return getSuperboxById(input.id);
+    }),
+    create: adminProcedure.input(superboxInput).mutation(async ({ input }) => {
+      const id = await createSuperbox(input);
+      return { id };
+    }),
+    update: adminProcedure.input(z.object({ id: z.number(), data: superboxInput.partial() })).mutation(async ({ input }) => {
+      await updateSuperbox(input.id, input.data);
+      return { success: true };
+    }),
+    delete: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
+      await deleteSuperbox(input.id);
       return { success: true };
     }),
   }),
