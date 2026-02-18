@@ -81,7 +81,7 @@ export default function Iletisim() {
                   {
                     icon: MapPin,
                     title: "Adres",
-                    content: "Atatürk Cad. No: 42, Merkez / İstanbul",
+                    content: "Aşağı Pazarcı, Zübeyde Hanım Cd. No:44, Manavgat / Antalya",
                     sub: "Mağazamız merkezi konumda, kolay ulaşılabilir.",
                   },
                   {
@@ -231,7 +231,7 @@ export default function Iletisim() {
         <div className="bg-gray-100 h-80 flex items-center justify-center">
           <div className="text-center">
             <MapPin className="w-10 h-10 text-[#004899]/40 mx-auto mb-3" />
-            <p className="text-gray-500 text-sm">Atatürk Cad. No: 42, Merkez / İstanbul</p>
+            <p className="text-gray-500 text-sm">Aşağı Pazarcı, Zübeyde Hanım Cd. No:44, Manavgat / Antalya</p>
             <p className="text-gray-400 text-xs mt-1">Harita görünümü</p>
           </div>
         </div>
