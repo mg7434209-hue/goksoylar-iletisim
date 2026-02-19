@@ -7,6 +7,10 @@ import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { SignJWT, jwtVerify } from "jose";
+import { ENV } from "./env";
+import { ADMIN_COOKIE_NAME } from "@shared/const";
+import { getSessionCookieOptions } from "./cookies";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -35,6 +39,64 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+
+  // ============ ADMIN AUTH REST ENDPOINTS ============
+  const adminSecret = new TextEncoder().encode(ENV.cookieSecret);
+
+  app.post("/api/admin/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      if (!username || !password) {
+        return res.status(400).json({ error: "Kullanıcı adı ve şifre gereklidir" });
+      }
+      if (username !== ENV.adminUsername || password !== ENV.adminPassword) {
+        return res.status(401).json({ error: "Kullanıcı adı veya şifre hatalı" });
+      }
+      // Create JWT token
+      const token = await new SignJWT({ role: "admin", username })
+        .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+        .setExpirationTime(Math.floor((Date.now() + 24 * 60 * 60 * 1000) / 1000))
+        .sign(adminSecret);
+
+      const cookieOptions = getSessionCookieOptions(req);
+      res.cookie(ADMIN_COOKIE_NAME, token, {
+        ...cookieOptions,
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      });
+      return res.json({ success: true, username });
+    } catch (error) {
+      console.error("[Admin Login] Error:", error);
+      return res.status(500).json({ error: "Sunucu hatası" });
+    }
+  });
+
+  app.get("/api/admin/verify", async (req, res) => {
+    try {
+      const cookieHeader = req.headers.cookie;
+      if (!cookieHeader) {
+        return res.status(401).json({ authenticated: false });
+      }
+      const { parse: parseCookie } = await import("cookie");
+      const cookies = parseCookie(cookieHeader);
+      const token = cookies[ADMIN_COOKIE_NAME];
+      if (!token) {
+        return res.status(401).json({ authenticated: false });
+      }
+      const { payload } = await jwtVerify(token, adminSecret, { algorithms: ["HS256"] });
+      if (payload.role !== "admin") {
+        return res.status(403).json({ authenticated: false });
+      }
+      return res.json({ authenticated: true, username: payload.username });
+    } catch (error) {
+      return res.status(401).json({ authenticated: false });
+    }
+  });
+
+  app.post("/api/admin/logout", (req, res) => {
+    const cookieOptions = getSessionCookieOptions(req);
+    res.clearCookie(ADMIN_COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
+    return res.json({ success: true });
+  });
   // tRPC API
   app.use(
     "/api/trpc",

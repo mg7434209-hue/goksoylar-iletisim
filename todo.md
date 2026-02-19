@@ -42,3 +42,8 @@
 - [x] Admin panel sayfalarındaki tüm hataları düzeltme
 - [x] Admin CRUD işlemlerinin (ekleme, düzenleme, silme) sorunsuz çalışmasını sağlama
 - [x] Admin paneli kullanıcı deneyimini iyileştirme
+- [x] Admin paneline özel kullanıcı adı/şifre ile giriş sistemi ekleme
+- [x] Backend admin auth endpoint'leri oluşturma (login/logout/verify)
+- [x] Admin giriş ekranı tasarlama
+- [x] Admin oturum yönetimi (JWT token)
+- [x] Admin auth testleri (28 test geçti)

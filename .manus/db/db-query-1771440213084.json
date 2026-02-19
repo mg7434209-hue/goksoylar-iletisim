@@ -1,0 +1,18 @@
+{
+  "query": "SELECT id, openId, name, email, role, lastSignedIn FROM users ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3HgUaDQoodZaYs7.01a11688bc71 --database 4DVJC8eN4zyPcYwaxCYWh6 --execute SELECT id, openId, name, email, role, lastSignedIn FROM users ORDER BY id;",
+  "rows": [
+    {
+      "id": "1",
+      "openId": "bai8EkStWTPGinnoropPcb",
+      "name": "mustafa göksoy",
+      "email": "mg7434209@gmail.com",
+      "role": "admin",
+      "lastSignedIn": "2026-02-18 18:42:53"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\trole\tlastSignedIn\n1\tbai8EkStWTPGinnoropPcb\tmustafa göksoy\tmg7434209@gmail.com\tadmin\t2026-02-18 18:42:53\n",
+  "stderr": "",
+  "execution_time_ms": 1473
+}
