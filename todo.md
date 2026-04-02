@@ -47,3 +47,4 @@
 - [x] Admin giriş ekranı tasarlama
 - [x] Admin oturum yönetimi (JWT token)
 - [x] Admin auth testleri (28 test geçti)
+- [x] Google Search Console doğrulama meta etiketini ekleme
