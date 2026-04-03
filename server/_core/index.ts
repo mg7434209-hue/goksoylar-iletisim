@@ -1,7 +1,9 @@
 import "dotenv/config";
 import express from "express";
+import fs from "fs";
 import { createServer } from "http";
 import net from "net";
+import path from "path";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
@@ -97,6 +99,35 @@ async function startServer() {
     res.clearCookie(ADMIN_COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
     return res.json({ success: true });
   });
+  // ============ STATIC SEO FILES ============
+  app.get("/sitemap.xml", (_req, res) => {
+    const sitemapPath = path.resolve(import.meta.dirname, "../../client/public/sitemap.xml");
+    const distSitemapPath = process.env.NODE_ENV === "production"
+      ? path.resolve(import.meta.dirname, "public/sitemap.xml")
+      : sitemapPath;
+    const filePath = fs.existsSync(distSitemapPath) ? distSitemapPath : sitemapPath;
+    if (fs.existsSync(filePath)) {
+      res.set("Content-Type", "application/xml; charset=utf-8");
+      res.send(fs.readFileSync(filePath, "utf-8"));
+    } else {
+      res.status(404).send("Sitemap not found");
+    }
+  });
+
+  app.get("/robots.txt", (_req, res) => {
+    const robotsPath = path.resolve(import.meta.dirname, "../../client/public/robots.txt");
+    const distRobotsPath = process.env.NODE_ENV === "production"
+      ? path.resolve(import.meta.dirname, "public/robots.txt")
+      : robotsPath;
+    const filePath = fs.existsSync(distRobotsPath) ? distRobotsPath : robotsPath;
+    if (fs.existsSync(filePath)) {
+      res.set("Content-Type", "text/plain; charset=utf-8");
+      res.send(fs.readFileSync(filePath, "utf-8"));
+    } else {
+      res.status(404).send("Robots.txt not found");
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",

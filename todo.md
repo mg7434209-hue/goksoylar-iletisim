@@ -48,3 +48,6 @@
 - [x] Admin oturum yönetimi (JWT token)
 - [x] Admin auth testleri (28 test geçti)
 - [x] Google Search Console doğrulama meta etiketini ekleme
+- [x] sitemap.xml dosyası oluşturma (https://goksoylar.com.tr/ linkleri ile)
+- [x] sitemap.xml'in kök dizinde gerçek XML olarak sunulmasını sağlama
+- [x] robots.txt dosyası oluşturma
