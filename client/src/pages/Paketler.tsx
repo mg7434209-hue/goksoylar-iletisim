@@ -12,6 +12,17 @@ import Footer from "@/components/Footer";
 
 const WAVE_IMG = "https://private-us-east-1.manuscdn.com/sessionFile/tQpG3h77LNb9xnBdLSPrmV/sandbox/fmmkiuE8pWZTDTPaZGMZLX-img-3_1771431371000_na1fn_dHVya2NlbGwtcGFja2FnZXM.jpg?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdFFwRzNoNzdMTmI5eG5CZExTUHJtVi9zYW5kYm94L2ZtbWtpdUU4cFdaVERUUGFaR01aTFgtaW1nLTNfMTc3MTQzMTM3MTAwMF9uYTFmbl9kSFZ5YTJObGJHd3RjR0ZqYTJGblpYTS5qcGc~eC1vc3MtcHJvY2Vzcz1pbWFnZS9yZXNpemUsd18xOTIwLGhfMTkyMC9mb3JtYXQsd2VicC9xdWFsaXR5LHFfODAiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=X5Lb~az1Yf600Uu~wN0~XbXCYCFe1Rz8XMB4cz04vxWZuVT9loPCXxnPyfxAGC29bRf2Xy5LdANr1hvEe12U1vB8-XbF4D~76bzaFKEKXz~Fx9Hwvmio1Bxocb0~NRMpH0y0gSXg~pl1p7YpE-ZYuU7bKY8tyccP5frCr-FL7uzKJQDUaicAI34AggrUZdWhRStJLFfd4G52P0-CT2aVMjqPwncsbUC3X7J3V5MJWbxZ7MjeH2UBqhwVMk1vFWHVC3-3d9NDt-g71tMmgc9jH8CYE~dTi2XZ2j1C2rSAdbB09YkwBHFg76zV9ut~tiusUdwBvVzPXFAZSdjad-6kYA__";
 
+function parseFeatures(features: unknown): string[] {
+  if (Array.isArray(features)) return features.filter((f): f is string => typeof f === "string");
+  if (typeof features !== "string") return [];
+  try {
+    const parsed = JSON.parse(features);
+    return Array.isArray(parsed) ? parsed.filter((f): f is string => typeof f === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function Paketler() {
   const { data: dbPackages } = trpc.packages.list.useQuery();
   const allPackages = dbPackages && dbPackages.length > 0 ? dbPackages : staticPackages;
@@ -108,11 +119,11 @@ export default function Paketler() {
                   </div>
 
                   {/* Features */}
-                  {pkg.features && (
+                  {parseFeatures(pkg.features).length > 0 && (
                     <div className="mb-5 flex-1">
                       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Dahil Özellikler</p>
                       <ul className="space-y-1.5">
-                        {(typeof pkg.features === 'string' ? JSON.parse(pkg.features) : pkg.features).map((f: string, fi: number) => (
+                        {parseFeatures(pkg.features).map((f: string, fi: number) => (
                           <li key={fi} className="flex items-center gap-2 text-sm text-gray-600">
                             <Check className="w-3.5 h-3.5 text-green-500 shrink-0" />
                             {f}

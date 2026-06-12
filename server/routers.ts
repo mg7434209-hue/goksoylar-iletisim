@@ -2,6 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
   getAllPhones, getPhoneById, createPhone, updatePhone, deletePhone,
@@ -31,6 +32,15 @@ const phoneInput = z.object({
   sortOrder: z.number().int().optional(),
 });
 
+const featuresJson = z.string().refine(value => {
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) && parsed.every(item => typeof item === "string");
+  } catch {
+    return false;
+  }
+}, { message: 'Özellikler geçerli bir JSON dizi olmalıdır, örn: ["BiP ücretsiz"]' });
+
 const packageInput = z.object({
   slug: z.string().min(1),
   name: z.string().min(1),
@@ -40,7 +50,7 @@ const packageInput = z.object({
   sms: z.string().min(1),
   price: z.number().int().positive(),
   popular: z.boolean().optional(),
-  features: z.string().nullable().optional(),
+  features: featuresJson.nullable().optional(),
   isActive: z.boolean().optional(),
   sortOrder: z.number().int().optional(),
 });
@@ -55,6 +65,20 @@ const accessoryInput = z.object({
   isActive: z.boolean().optional(),
   sortOrder: z.number().int().optional(),
 });
+
+function isDuplicateEntryError(error: unknown): boolean {
+  return error instanceof Error && /ER_DUP_ENTRY|Duplicate entry/i.test(error.message);
+}
+
+function rethrowFriendly(error: unknown, entityLabel: string): never {
+  if (isDuplicateEntryError(error)) {
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Bu slug ile kayıtlı bir ${entityLabel} zaten var. Lütfen farklı bir slug kullanın.`,
+    });
+  }
+  throw error;
+}
 
 const superboxInput = z.object({
   slug: z.string().min(1),
@@ -120,12 +144,20 @@ export const appRouter = router({
       return getPackageById(input.id);
     }),
     create: adminProcedure.input(packageInput).mutation(async ({ input }) => {
-      const id = await createPackage(input);
-      return { id };
+      try {
+        const id = await createPackage(input);
+        return { id };
+      } catch (error) {
+        rethrowFriendly(error, "paket");
+      }
     }),
     update: adminProcedure.input(z.object({ id: z.number(), data: packageInput.partial() })).mutation(async ({ input }) => {
-      await updatePackage(input.id, input.data);
-      return { success: true };
+      try {
+        await updatePackage(input.id, input.data);
+        return { success: true };
+      } catch (error) {
+        rethrowFriendly(error, "paket");
+      }
     }),
     delete: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
       await deletePackage(input.id);

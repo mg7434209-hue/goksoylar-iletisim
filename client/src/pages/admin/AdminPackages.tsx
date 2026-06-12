@@ -35,20 +35,40 @@ const categoryLabels: Record<string, string> = {
   genc: "GNÇ+",
 };
 
+const TURKISH_CHAR_MAP: Record<string, string> = {
+  ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u",
+};
+
+function slugify(text: string): string {
+  return text
+    .toLocaleLowerCase("tr")
+    .replace(/[çğıöşü]/g, ch => TURKISH_CHAR_MAP[ch] ?? ch)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+function friendlyError(message: string | undefined, fallback: string): string {
+  if (!message) return fallback;
+  if (message.includes("10001") || message.includes("10002")) {
+    return "Oturumunuz doğrulanamadı. Lütfen sayfayı yenileyip tekrar giriş yapın.";
+  }
+  return message;
+}
+
 export default function AdminPackages() {
   const utils = trpc.useUtils();
-  const { data: packages, isLoading } = trpc.packages.listAll.useQuery();
+  const { data: packages, isLoading, error: listError } = trpc.packages.listAll.useQuery();
   const createMutation = trpc.packages.create.useMutation({
     onSuccess: () => { utils.packages.listAll.invalidate(); toast.success("Paket başarıyla eklendi"); setOpen(false); },
-    onError: (err) => { toast.error("Hata: " + (err.message || "Paket eklenemedi")); },
+    onError: (err) => { toast.error(friendlyError(err.message, "Paket eklenemedi")); },
   });
   const updateMutation = trpc.packages.update.useMutation({
     onSuccess: () => { utils.packages.listAll.invalidate(); toast.success("Paket başarıyla güncellendi"); setOpen(false); },
-    onError: (err) => { toast.error("Hata: " + (err.message || "Paket güncellenemedi")); },
+    onError: (err) => { toast.error(friendlyError(err.message, "Paket güncellenemedi")); },
   });
   const deleteMutation = trpc.packages.delete.useMutation({
     onSuccess: () => { utils.packages.listAll.invalidate(); toast.success("Paket başarıyla silindi"); setDeleteId(null); },
-    onError: (err) => { toast.error("Hata: " + (err.message || "Paket silinemedi")); },
+    onError: (err) => { toast.error(friendlyError(err.message, "Paket silinemedi")); },
   });
 
   const [open, setOpen] = useState(false);
@@ -86,8 +106,22 @@ export default function AdminPackages() {
     if (!form.sms.trim()) { toast.error("SMS bilgisi zorunludur"); return; }
     if (!form.price || form.price <= 0) { toast.error("Geçerli bir fiyat girin"); return; }
 
-    const slug = form.slug || form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-    const data = { ...form, slug, features: form.features || undefined };
+    const featuresValue = form.features.trim();
+    if (featuresValue) {
+      try {
+        const parsed = JSON.parse(featuresValue);
+        if (!Array.isArray(parsed) || !parsed.every(item => typeof item === "string")) {
+          throw new Error();
+        }
+      } catch {
+        toast.error('Özellikler geçerli bir JSON dizi olmalıdır, örn: ["BiP ücretsiz", "TV+ dahil"]');
+        return;
+      }
+    }
+
+    const slug = form.slug || slugify(form.name);
+    if (!slug) { toast.error("Slug oluşturulamadı, lütfen elle girin"); return; }
+    const data = { ...form, slug, features: featuresValue || null };
     if (editId) {
       updateMutation.mutate({ id: editId, data });
     } else {
@@ -124,6 +158,19 @@ export default function AdminPackages() {
             <div className="animate-spin w-5 h-5 border-2 border-gray-300 border-t-[#004899] rounded-full" />
             Yükleniyor...
           </div>
+        </div>
+      ) : listError ? (
+        <div className="bg-white rounded-xl border border-red-100 shadow-sm p-12 text-center">
+          <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <X className="w-8 h-8 text-red-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-1">Paketler yüklenemedi</h3>
+          <p className="text-gray-500 text-sm mb-4">
+            {friendlyError(listError.message, "Sunucuya ulaşılamadı. Lütfen tekrar deneyin.")}
+          </p>
+          <Button variant="outline" size="sm" onClick={() => utils.packages.listAll.invalidate()}>
+            Tekrar Dene
+          </Button>
         </div>
       ) : filteredPackages.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-12 text-center">
