@@ -7,6 +7,7 @@ import path from "path";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
+import { initDatabase } from "../bootstrap";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { SignJWT, jwtVerify } from "jose";
@@ -34,6 +35,13 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 async function startServer() {
+  // Migration ve boş tablo seed işlemleri; hata olsa bile sunucu açılır.
+  try {
+    await initDatabase();
+  } catch (error) {
+    console.error("[Bootstrap] Veritabanı hazırlığı başarısız:", error);
+  }
+
   const app = express();
   const server = createServer(app);
   // Configure body parser with larger size limit for file uploads
