@@ -1,0 +1,41 @@
+name: Railway Deploy
+
+# main dalına her push'ta production ortamını otomatik deploy eder.
+# Manuel tetikleme için Actions sekmesinden "Run workflow" da kullanılabilir.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Aynı anda yalnızca tek deploy çalışsın; üst üste push'larda eskisi iptal edilir.
+concurrency:
+  group: railway-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Railway CLI kur
+        run: npm i -g @railway/cli
+
+      - name: Railway'e deploy et
+        env:
+          # Repo > Settings > Secrets and variables > Actions altında tanımlanmalı:
+          #   RAILWAY_TOKEN   : Railway proje token'ı (Project Settings > Tokens)
+          #   RAILWAY_SERVICE : (opsiyonel) deploy edilecek servis adı
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }}
+        run: |
+          if [ -z "$RAILWAY_TOKEN" ]; then
+            echo "::error::RAILWAY_TOKEN secret tanımlı değil. Repo Settings > Secrets and variables > Actions altından ekleyin."
+            exit 1
+          fi
+          if [ -n "$RAILWAY_SERVICE" ]; then
+            railway up --ci --service "$RAILWAY_SERVICE"
+          else
+            railway up --ci
+          fi
