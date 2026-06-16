@@ -41,9 +41,9 @@ export const accessoriesSeed: InsertAccessory[] = [
 ];
 
 export const superboxSeed: InsertSuperbox[] = [
-  { slug: "superbox-5g-hazir-250gb", name: "Superbox 5G Hazır 250 GB", category: "5g-hazir", speed: "4.5G", quota: "250 GB", commitment: "12 Ay", price: 1100, bonus: null, bonusDetail: null, isOnlineExclusive: false, popular: false, sortOrder: 1 },
-  { slug: "superbox-5g-hazir-500gb", name: "Superbox 5G Hazır 500 GB", category: "5g-hazir", speed: "4.5G", quota: "500 GB", commitment: "12 Ay", price: 1350, bonus: null, bonusDetail: null, isOnlineExclusive: false, popular: true, sortOrder: 2 },
-  { slug: "superbox-5g-hazir-1tb", name: "Superbox 5G Hazır 1 TB", category: "5g-hazir", speed: "4.5G", quota: "1 TB", commitment: "12 Ay", price: 1850, bonus: null, bonusDetail: null, isOnlineExclusive: false, popular: false, sortOrder: 3 },
+  { slug: "superbox-5g-hazir-250gb", name: "Superbox 5G Hazır 250 GB", category: "5g-hazir", speed: "5G", quota: "250 GB", commitment: "12 Ay", price: 1100, bonus: null, bonusDetail: null, isOnlineExclusive: false, popular: false, sortOrder: 1 },
+  { slug: "superbox-5g-hazir-500gb", name: "Superbox 5G Hazır 500 GB", category: "5g-hazir", speed: "5G", quota: "500 GB", commitment: "12 Ay", price: 1350, bonus: null, bonusDetail: null, isOnlineExclusive: false, popular: true, sortOrder: 2 },
+  { slug: "superbox-5g-hazir-1tb", name: "Superbox 5G Hazır 1 TB", category: "5g-hazir", speed: "5G", quota: "1 TB", commitment: "12 Ay", price: 1850, bonus: null, bonusDetail: null, isOnlineExclusive: false, popular: false, sortOrder: 3 },
   { slug: "superbox-devam-200gb", name: "Superbox Devam 200 GB", category: "devam", speed: "4.5G", quota: "200 GB", commitment: "12 Ay", price: 1000, bonus: "50 GB Hediye", bonusDetail: "12 Ay Boyunca Her Ay Hediye", isOnlineExclusive: false, popular: false, sortOrder: 4 },
   { slug: "superbox-devam-500gb", name: "Superbox Devam 500 GB", category: "devam", speed: "4.5G", quota: "500 GB", commitment: "12 Ay", price: 1250, bonus: null, bonusDetail: null, isOnlineExclusive: false, popular: true, sortOrder: 5 },
   { slug: "superbox-devam-1tb", name: "Superbox Devam 1 TB", category: "devam", speed: "4.5G", quota: "1 TB", commitment: "12 Ay", price: 1750, bonus: null, bonusDetail: null, isOnlineExclusive: false, popular: false, sortOrder: 6 },
