@@ -26,18 +26,23 @@ const features = [
   { icon: CheckCircle, text: "Aşım Derdi Yok", desc: "Kotanız bitince hız düşer" },
 ];
 
+// Turkcell mavisi — 5G paketleri için ayrılmış renk
+const turkcellGradient = "from-[#004899] to-[#0066cc]";
+const turkcellBorder = "border-[#004899]/30 hover:border-[#004899]";
+
+// 5G olmayan (4.5G) paketler için farklı renkler
 const cardGradients = [
-  "from-blue-500 to-blue-700",
   "from-red-500 to-red-700",
   "from-purple-500 to-purple-700",
   "from-amber-500 to-amber-700",
+  "from-emerald-500 to-emerald-700",
 ];
 
 const cardBorders = [
-  "border-blue-200 hover:border-blue-400",
   "border-red-200 hover:border-red-400",
   "border-purple-200 hover:border-purple-400",
   "border-amber-200 hover:border-amber-400",
+  "border-emerald-200 hover:border-emerald-400",
 ];
 
 /* ===== BAŞVURU FORMU MODALI ===== */
@@ -468,11 +473,15 @@ export default function Superbox() {
 
 /* ===== SUPERBOX CARD ===== */
 function SuperboxCard({ pkg, index, onApply }: { pkg: any; index: number; onApply: (pkg: any) => void }) {
-  const gradientIdx = index % cardGradients.length;
+  // "5G Hazır" paketleri 5G'dir; geri kalanı 4.5G
+  const is5G = pkg.category === "5g-hazir" || pkg.speed === "5G";
+  const speedLabel = is5G ? "5G" : (pkg.speed ?? "4.5G");
+  const gradient = is5G ? turkcellGradient : cardGradients[index % cardGradients.length];
+  const border = is5G ? turkcellBorder : cardBorders[index % cardBorders.length];
 
   return (
     <div className={`relative bg-white rounded-2xl overflow-hidden border-2 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
-      pkg.popular ? "border-[#FFD200] shadow-xl ring-2 ring-[#FFD200]/30" : cardBorders[gradientIdx]
+      pkg.popular ? "border-[#FFD200] shadow-xl ring-2 ring-[#FFD200]/30" : border
     }`}>
       {pkg.popular && (
         <div className="absolute -top-0 left-0 right-0 bg-[#FFD200] text-[#004899] text-xs font-bold text-center py-1.5">
@@ -481,19 +490,19 @@ function SuperboxCard({ pkg, index, onApply }: { pkg: any; index: number; onAppl
       )}
 
       {/* Gradient Header */}
-      <div className={`bg-gradient-to-br ${cardGradients[gradientIdx]} px-6 py-8 ${pkg.popular ? "pt-10" : ""}`}>
+      <div className={`bg-gradient-to-br ${gradient} px-6 py-8 ${pkg.popular ? "pt-10" : ""}`}>
         <div className="text-center">
           <Wifi className="w-10 h-10 text-white/80 mx-auto mb-3" />
           <h3 className="text-white font-bold text-lg font-[Poppins] mb-1">{pkg.name}</h3>
           <div className="flex items-center justify-center gap-2">
-            <span className="text-white/70 text-sm">4.5G Hızında</span>
+            <span className="text-white/70 text-sm">{speedLabel} Hızında</span>
           </div>
         </div>
       </div>
 
       {/* Quota Badge */}
       <div className="flex justify-center -mt-5">
-        <div className={`bg-gradient-to-r ${cardGradients[gradientIdx]} text-white font-extrabold text-2xl px-8 py-2.5 rounded-full shadow-lg font-[Poppins]`}>
+        <div className={`bg-gradient-to-r ${gradient} text-white font-extrabold text-2xl px-8 py-2.5 rounded-full shadow-lg font-[Poppins]`}>
           {pkg.quota}
         </div>
       </div>
