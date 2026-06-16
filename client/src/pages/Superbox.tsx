@@ -474,7 +474,10 @@ export default function Superbox() {
 /* ===== SUPERBOX CARD ===== */
 function SuperboxCard({ pkg, index, onApply }: { pkg: any; index: number; onApply: (pkg: any) => void }) {
   // "5G Hazır" paketleri 5G'dir; geri kalanı 4.5G
-  const is5G = pkg.category === "5g-hazir" || pkg.speed === "5G";
+  const is5G =
+    pkg.category === "5g-hazir" ||
+    pkg.speed === "5G" ||
+    (pkg.name ?? "").includes("5G Hazır");
   const speedLabel = is5G ? "5G" : (pkg.speed ?? "4.5G");
   const gradient = is5G ? turkcellGradient : cardGradients[index % cardGradients.length];
   const border = is5G ? turkcellBorder : cardBorders[index % cardBorders.length];
