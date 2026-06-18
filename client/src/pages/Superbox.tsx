@@ -30,20 +30,9 @@ const features = [
 const turkcellGradient = "from-[#004899] to-[#0066cc]";
 const turkcellBorder = "border-[#004899]/30 hover:border-[#004899]";
 
-// 5G olmayan (4.5G) paketler için farklı renkler
-const cardGradients = [
-  "from-red-500 to-red-700",
-  "from-purple-500 to-purple-700",
-  "from-amber-500 to-amber-700",
-  "from-emerald-500 to-emerald-700",
-];
-
-const cardBorders = [
-  "border-red-200 hover:border-red-400",
-  "border-purple-200 hover:border-purple-400",
-  "border-amber-200 hover:border-amber-400",
-  "border-emerald-200 hover:border-emerald-400",
-];
+// 5G olmayan (4.5G) paketler için tek renk — yeşil (5G mavisinden ayrışsın)
+const speedGradient = "from-emerald-500 to-emerald-700";
+const speedBorder = "border-emerald-200 hover:border-emerald-400";
 
 /* ===== BAŞVURU FORMU MODALI ===== */
 function ApplicationModal({
@@ -479,8 +468,8 @@ function SuperboxCard({ pkg, index, onApply }: { pkg: any; index: number; onAppl
     pkg.speed === "5G" ||
     (pkg.name ?? "").includes("5G Hazır");
   const speedLabel = is5G ? "5G" : (pkg.speed ?? "4.5G");
-  const gradient = is5G ? turkcellGradient : cardGradients[index % cardGradients.length];
-  const border = is5G ? turkcellBorder : cardBorders[index % cardBorders.length];
+  const gradient = is5G ? turkcellGradient : speedGradient;
+  const border = is5G ? turkcellBorder : speedBorder;
 
   return (
     <div className={`relative bg-white rounded-2xl overflow-hidden border-2 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
