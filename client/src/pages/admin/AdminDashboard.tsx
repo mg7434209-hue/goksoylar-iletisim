@@ -1,5 +1,5 @@
 import { trpc } from "@/lib/trpc";
-import { Smartphone, Package, Headphones, TrendingUp, Wifi, ArrowRight } from "lucide-react";
+import { Smartphone, Package, Headphones, TrendingUp, Wifi, ArrowRight, Inbox } from "lucide-react";
 import { Link } from "wouter";
 import AdminVisitStats from "./AdminVisitStats";
 
@@ -65,8 +65,21 @@ export default function AdminDashboard() {
     { icon: Headphones, label: "Aksesuar Yönetimi", desc: "Ekle, düzenle, kaldır", href: "/admin/aksesuarlar", hoverBorder: "hover:border-purple-300", hoverBg: "hover:bg-purple-50", iconColor: "text-purple-600" },
   ];
 
+  const { data: unreadMessages } = trpc.messages.unreadCount.useQuery();
+
   return (
     <div className="space-y-8">
+      {!!unreadMessages && (
+        <Link href="/admin/mesajlar">
+          <div className="flex items-center gap-3 bg-[#FFD200]/20 border border-[#FFD200] rounded-xl px-5 py-4 cursor-pointer hover:bg-[#FFD200]/30 transition-colors">
+            <Inbox className="w-5 h-5 text-[#004899]" />
+            <p className="text-sm font-medium text-[#004899]">
+              {unreadMessages} okunmamış mesajınız var
+            </p>
+            <ArrowRight className="w-4 h-4 text-[#004899] ml-auto" />
+          </div>
+        </Link>
+      )}
       <div>
         <h1 className="text-2xl font-bold text-gray-900 font-[Poppins]">Admin Paneli</h1>
         <p className="text-gray-500 mt-1">Göksoylar İletişim ürün ve paket yönetimi</p>

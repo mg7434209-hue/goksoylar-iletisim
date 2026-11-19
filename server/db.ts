@@ -7,6 +7,7 @@ import {
   accessories, InsertAccessory,
   superbox, InsertSuperbox,
   visitStats,
+  contactMessages, InsertContactMessage,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -294,4 +295,41 @@ export async function getRecentVisitStats(days: number) {
   const db = await getDb();
   if (!db) return [];
   return db.select().from(visitStats).orderBy(desc(visitStats.day)).limit(days);
+}
+
+// ============ CONTACT MESSAGES (iletişim formu) ============
+
+export async function createContactMessage(data: InsertContactMessage) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(contactMessages).values(data);
+  return result[0].insertId;
+}
+
+export async function getAllContactMessages() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(contactMessages).orderBy(desc(contactMessages.createdAt), desc(contactMessages.id));
+}
+
+export async function countUnreadContactMessages() {
+  const db = await getDb();
+  if (!db) return 0;
+  const [row] = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(contactMessages)
+    .where(eq(contactMessages.isRead, false));
+  return Number(row?.count ?? 0);
+}
+
+export async function setContactMessageRead(id: number, isRead: boolean) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(contactMessages).set({ isRead }).where(eq(contactMessages.id, id));
+}
+
+export async function deleteContactMessage(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(contactMessages).where(eq(contactMessages.id, id));
 }

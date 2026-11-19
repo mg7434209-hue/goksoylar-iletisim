@@ -18,6 +18,7 @@ import AdminPackages from "./pages/admin/AdminPackages";
 import AdminAccessories from "./pages/admin/AdminAccessories";
 import Superbox from "./pages/Superbox";
 import AdminSuperbox from "./pages/admin/AdminSuperbox";
+import AdminMessages from "./pages/admin/AdminMessages";
 
 function Router() {
   return (
@@ -43,6 +44,9 @@ function Router() {
       </Route>
       <Route path="/admin/superbox">
         <AdminLayout><AdminSuperbox /></AdminLayout>
+      </Route>
+      <Route path="/admin/mesajlar">
+        <AdminLayout><AdminMessages /></AdminLayout>
       </Route>
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

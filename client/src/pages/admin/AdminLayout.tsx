@@ -3,8 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   LayoutDashboard, Smartphone, Package, Headphones, Wifi,
-  LogOut, ArrowLeft, Menu, X, Lock, Eye, EyeOff, User
+  LogOut, ArrowLeft, Menu, X, Lock, Eye, EyeOff, User, Inbox
 } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 import { useState, useEffect, createContext, useContext } from "react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
@@ -208,7 +209,18 @@ const menuItems = [
   { icon: Package, label: "Paketler", path: "/admin/paketler" },
   { icon: Wifi, label: "Superbox", path: "/admin/superbox" },
   { icon: Headphones, label: "Aksesuarlar", path: "/admin/aksesuarlar" },
+  { icon: Inbox, label: "Mesajlar", path: "/admin/mesajlar" },
 ];
+
+function UnreadBadge({ active }: { active: boolean }) {
+  const { data: count } = trpc.messages.unreadCount.useQuery(undefined, { refetchInterval: 60_000 });
+  if (!count) return null;
+  return (
+    <span className={`ml-auto text-[11px] font-bold px-1.5 min-w-5 h-5 rounded-full inline-flex items-center justify-center ${active ? "bg-white text-[#004899]" : "bg-[#FFD200] text-[#004899]"}`}>
+      {count}
+    </span>
+  );
+}
 
 function AdminPanel({ children }: { children: React.ReactNode }) {
   const { authenticated, username, loading, logout } = useAdminAuth();
@@ -266,6 +278,7 @@ function AdminPanel({ children }: { children: React.ReactNode }) {
                   >
                     <item.icon className="w-4 h-4" />
                     {item.label}
+                    {item.path === "/admin/mesajlar" && <UnreadBadge active={isActive} />}
                   </div>
                 </Link>
               );

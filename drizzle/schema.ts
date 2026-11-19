@@ -126,3 +126,20 @@ export const visitStats = mysqlTable("visit_stats", {
 });
 
 export type VisitStat = typeof visitStats.$inferSelect;
+
+/**
+ * Contact messages table - İletişim formundan gelen mesajlar
+ */
+export const contactMessages = mysqlTable("contact_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 128 }).notNull(),
+  phone: varchar("phone", { length: 32 }).notNull(),
+  email: varchar("email", { length: 320 }),
+  subject: varchar("subject", { length: 64 }).notNull(),
+  message: text("message").notNull(),
+  isRead: boolean("isRead").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ContactMessage = typeof contactMessages.$inferSelect;
+export type InsertContactMessage = typeof contactMessages.$inferInsert;

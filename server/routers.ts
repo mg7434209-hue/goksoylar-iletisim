@@ -10,7 +10,43 @@ import {
   getAllAccessories, getAccessoryById, createAccessory, updateAccessory, deleteAccessory,
   getAllSuperbox, getSuperboxById, createSuperbox, updateSuperbox, deleteSuperbox,
   recordVisit, getVisitSummary, getRecentVisitStats,
+  createContactMessage, getAllContactMessages, countUnreadContactMessages,
+  setContactMessageRead, deleteContactMessage,
 } from "./db";
+
+// İletişim formu: aynı IP'den 10 dakikada en fazla 5 mesaj (spam koruması)
+const MESSAGE_WINDOW_MS = 10 * 60 * 1000;
+const MESSAGE_LIMIT = 5;
+const messageHits = new Map<string, number[]>();
+
+function clientIp(req: { headers?: Record<string, unknown>; socket?: { remoteAddress?: string } }): string {
+  const fwd = req.headers?.["x-forwarded-for"];
+  const first = (Array.isArray(fwd) ? fwd[0] : String(fwd ?? "")).split(",")[0].trim();
+  return first || req.socket?.remoteAddress || "unknown";
+}
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const hits = (messageHits.get(ip) ?? []).filter(t => now - t < MESSAGE_WINDOW_MS);
+  if (hits.length >= MESSAGE_LIMIT) {
+    messageHits.set(ip, hits);
+    return true;
+  }
+  hits.push(now);
+  messageHits.set(ip, hits);
+  if (messageHits.size > 5000) messageHits.clear();
+  return false;
+}
+
+const contactMessageInput = z.object({
+  name: z.string().trim().min(2, "Ad soyad en az 2 karakter olmalı").max(128),
+  phone: z.string().trim().min(7, "Geçerli bir telefon numarası girin").max(32)
+    .regex(/^[0-9+()\s-]+$/, "Geçerli bir telefon numarası girin"),
+  email: z.union([z.string().trim().email("Geçerli bir e-posta girin").max(320), z.literal("")]).optional(),
+  subject: z.string().trim().min(1, "Konu seçin").max(64),
+  message: z.string().trim().min(5, "Mesaj çok kısa").max(5000),
+  website: z.string().optional(), // bot tuzağı (honeypot) - gerçek kullanıcı boş bırakır
+});
 
 // Arama motoru / bot ziyaretlerini sayaca katma
 const BOT_UA = /bot|crawl|spider|slurp|preview|headless|lighthouse|facebookexternalhit|whatsapp|telegram/i;
@@ -217,6 +253,52 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return getRecentVisitStats(input?.days ?? 30);
       }),
+  }),
+
+  // ============ İLETİŞİM MESAJLARI ============
+  messages: router({
+    create: publicProcedure.input(contactMessageInput).mutation(async ({ input, ctx }) => {
+      // Honeypot dolduysa bot: sessizce başarılı dön, kaydetme
+      if (input.website) return { success: true };
+      if (isRateLimited(clientIp(ctx.req as any))) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Çok fazla mesaj gönderdiniz. Lütfen biraz sonra tekrar deneyin veya bizi arayın.",
+        });
+      }
+      try {
+        await createContactMessage({
+          name: input.name,
+          phone: input.phone,
+          email: input.email || null,
+          subject: input.subject,
+          message: input.message,
+        });
+        return { success: true };
+      } catch (error) {
+        console.error("[Messages] Mesaj kaydedilemedi:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Mesajınız şu an gönderilemedi. Lütfen bizi telefonla veya WhatsApp'tan arayın.",
+        });
+      }
+    }),
+    list: adminProcedure.query(async () => {
+      return getAllContactMessages();
+    }),
+    unreadCount: adminProcedure.query(async () => {
+      return countUnreadContactMessages();
+    }),
+    setRead: adminProcedure
+      .input(z.object({ id: z.number().int(), isRead: z.boolean() }))
+      .mutation(async ({ input }) => {
+        await setContactMessageRead(input.id, input.isRead);
+        return { success: true };
+      }),
+    delete: adminProcedure.input(z.object({ id: z.number().int() })).mutation(async ({ input }) => {
+      await deleteContactMessage(input.id);
+      return { success: true };
+    }),
   }),
 
   // ============ SUPERBOX ROUTES ============
