@@ -8,6 +8,7 @@ import { Phone, Mail, MapPin, Clock, Send, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { trpc } from "@/lib/trpc";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -28,10 +29,27 @@ export default function Iletisim() {
     message: "",
   });
 
+  const [website, setWebsite] = useState(""); // bot tuzağı (gizli alan)
+  const sendMessage = trpc.messages.create.useMutation({
+    onSuccess: () => {
+      toast.success("Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağız.");
+      setFormData({ name: "", phone: "", email: "", subject: "", message: "" });
+    },
+    onError: (error) => {
+      // Doğrulama hataları JSON dizisi olarak gelir; ilk hatayı göster
+      let msg = error.message;
+      try {
+        const issues = JSON.parse(error.message);
+        if (Array.isArray(issues) && issues[0]?.message) msg = issues[0].message;
+      } catch {}
+      toast.error(msg || "Mesajınız gönderilemedi. Lütfen bizi telefonla arayın.");
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağız.");
-    setFormData({ name: "", phone: "", email: "", subject: "", message: "" });
+    if (sendMessage.isPending) return;
+    sendMessage.mutate({ ...formData, website });
   };
 
   return (
@@ -212,12 +230,24 @@ export default function Iletisim() {
                       placeholder="Mesajınızı buraya yazın..."
                     />
                   </div>
+                  {/* Bot tuzağı: gerçek kullanıcılar görmez */}
+                  <input
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    value={website}
+                    onChange={(e) => setWebsite(e.target.value)}
+                    className="absolute -left-[9999px] w-px h-px opacity-0"
+                  />
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-2 bg-[#FFD200] text-[#004899] font-bold px-8 py-3.5 rounded-xl hover:bg-yellow-300 transition-all shadow-md text-sm"
+                    disabled={sendMessage.isPending}
+                    className="inline-flex items-center gap-2 bg-[#FFD200] text-[#004899] font-bold px-8 py-3.5 rounded-xl hover:bg-yellow-300 transition-all shadow-md text-sm disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <Send className="w-4 h-4" />
-                    Mesaj Gönder
+                    {sendMessage.isPending ? "Gönderiliyor..." : "Mesaj Gönder"}
                   </button>
                 </form>
               </div>

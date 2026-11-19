@@ -4,6 +4,7 @@
  */
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Link } from "wouter";
+import VisitorCounter from "./VisitorCounter";
 
 export default function Footer() {
   return (
@@ -113,6 +114,7 @@ export default function Footer() {
             <p className="text-gray-500 text-sm">
               &copy; 2026 Göksoylar İletişim. Tüm hakları saklıdır.
             </p>
+            <VisitorCounter />
             <div className="flex items-center gap-6 text-gray-500 text-sm">
               <span>Gizlilik Politikası</span>
               <span>Kullanım Koşulları</span>

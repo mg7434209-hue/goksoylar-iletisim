@@ -3,6 +3,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
+import VisitTracker from "./components/VisitTracker";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Telefonlar from "./pages/Telefonlar";
@@ -17,6 +18,7 @@ import AdminPackages from "./pages/admin/AdminPackages";
 import AdminAccessories from "./pages/admin/AdminAccessories";
 import Superbox from "./pages/Superbox";
 import AdminSuperbox from "./pages/admin/AdminSuperbox";
+import AdminMessages from "./pages/admin/AdminMessages";
 
 function Router() {
   return (
@@ -43,6 +45,9 @@ function Router() {
       <Route path="/admin/superbox">
         <AdminLayout><AdminSuperbox /></AdminLayout>
       </Route>
+      <Route path="/admin/mesajlar">
+        <AdminLayout><AdminMessages /></AdminLayout>
+      </Route>
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -55,6 +60,7 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
+          <VisitTracker />
           <Router />
         </TooltipProvider>
       </ThemeProvider>

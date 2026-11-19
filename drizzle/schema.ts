@@ -113,3 +113,33 @@ export const superbox = mysqlTable("superbox", {
 
 export type Superbox = typeof superbox.$inferSelect;
 export type InsertSuperbox = typeof superbox.$inferInsert;
+
+/**
+ * Visit stats table - Günlük ziyaretçi sayacı
+ * Her gün (Europe/Istanbul) için tek satır tutulur.
+ */
+export const visitStats = mysqlTable("visit_stats", {
+  day: varchar("day", { length: 10 }).primaryKey(), // YYYY-MM-DD
+  pageViews: int("pageViews").default(0).notNull(),
+  visitors: int("visitors").default(0).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VisitStat = typeof visitStats.$inferSelect;
+
+/**
+ * Contact messages table - İletişim formundan gelen mesajlar
+ */
+export const contactMessages = mysqlTable("contact_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 128 }).notNull(),
+  phone: varchar("phone", { length: 32 }).notNull(),
+  email: varchar("email", { length: 320 }),
+  subject: varchar("subject", { length: 64 }).notNull(),
+  message: text("message").notNull(),
+  isRead: boolean("isRead").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ContactMessage = typeof contactMessages.$inferSelect;
+export type InsertContactMessage = typeof contactMessages.$inferInsert;
