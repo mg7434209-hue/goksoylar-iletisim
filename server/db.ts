@@ -1,4 +1,4 @@
-import { eq, desc, asc } from "drizzle-orm";
+import { eq, desc, asc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser, users,
@@ -6,6 +6,7 @@ import {
   packages, InsertPackage,
   accessories, InsertAccessory,
   superbox, InsertSuperbox,
+  visitStats,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -242,4 +243,55 @@ export async function deleteSuperbox(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(superbox).where(eq(superbox.id, id));
+}
+
+// ============ VISITOR STATS (ziyaretçi sayacı) ============
+
+/** Türkiye saatine göre bugünün tarihi (YYYY-MM-DD) */
+export function istanbulDay(date: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Istanbul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+}
+
+export async function recordVisit(newVisitor: boolean) {
+  const db = await getDb();
+  if (!db) return;
+  await db
+    .insert(visitStats)
+    .values({ day: istanbulDay(), pageViews: 1, visitors: newVisitor ? 1 : 0 })
+    .onDuplicateKeyUpdate({
+      set: {
+        pageViews: sql`${visitStats.pageViews} + 1`,
+        visitors: sql`${visitStats.visitors} + ${newVisitor ? 1 : 0}`,
+      },
+    });
+}
+
+export async function getVisitSummary() {
+  const empty = { todayVisitors: 0, todayViews: 0, totalVisitors: 0, totalViews: 0 };
+  const db = await getDb();
+  if (!db) return empty;
+  const [totals] = await db
+    .select({
+      totalVisitors: sql<number>`COALESCE(SUM(${visitStats.visitors}), 0)`,
+      totalViews: sql<number>`COALESCE(SUM(${visitStats.pageViews}), 0)`,
+    })
+    .from(visitStats);
+  const [today] = await db.select().from(visitStats).where(eq(visitStats.day, istanbulDay())).limit(1);
+  return {
+    todayVisitors: today?.visitors ?? 0,
+    todayViews: today?.pageViews ?? 0,
+    totalVisitors: Number(totals?.totalVisitors ?? 0),
+    totalViews: Number(totals?.totalViews ?? 0),
+  };
+}
+
+export async function getRecentVisitStats(days: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(visitStats).orderBy(desc(visitStats.day)).limit(days);
 }

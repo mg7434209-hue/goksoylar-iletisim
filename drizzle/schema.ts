@@ -113,3 +113,16 @@ export const superbox = mysqlTable("superbox", {
 
 export type Superbox = typeof superbox.$inferSelect;
 export type InsertSuperbox = typeof superbox.$inferInsert;
+
+/**
+ * Visit stats table - Günlük ziyaretçi sayacı
+ * Her gün (Europe/Istanbul) için tek satır tutulur.
+ */
+export const visitStats = mysqlTable("visit_stats", {
+  day: varchar("day", { length: 10 }).primaryKey(), // YYYY-MM-DD
+  pageViews: int("pageViews").default(0).notNull(),
+  visitors: int("visitors").default(0).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VisitStat = typeof visitStats.$inferSelect;

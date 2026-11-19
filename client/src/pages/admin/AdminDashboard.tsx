@@ -1,6 +1,7 @@
 import { trpc } from "@/lib/trpc";
 import { Smartphone, Package, Headphones, TrendingUp, Wifi, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
+import AdminVisitStats from "./AdminVisitStats";
 
 export default function AdminDashboard() {
   const { data: phones, isLoading: phonesLoading } = trpc.phones.listAll.useQuery();
@@ -106,6 +107,8 @@ export default function AdminDashboard() {
           ))}
         </div>
       )}
+
+      <AdminVisitStats />
 
       {/* Quick Actions */}
       <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">

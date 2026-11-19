@@ -9,7 +9,11 @@ import {
   getAllPackages, getPackageById, createPackage, updatePackage, deletePackage,
   getAllAccessories, getAccessoryById, createAccessory, updateAccessory, deleteAccessory,
   getAllSuperbox, getSuperboxById, createSuperbox, updateSuperbox, deleteSuperbox,
+  recordVisit, getVisitSummary, getRecentVisitStats,
 } from "./db";
+
+// Arama motoru / bot ziyaretlerini sayaca katma
+const BOT_UA = /bot|crawl|spider|slurp|preview|headless|lighthouse|facebookexternalhit|whatsapp|telegram/i;
 
 // ============ VALIDATION SCHEMAS ============
 
@@ -188,6 +192,31 @@ export const appRouter = router({
       await deleteAccessory(input.id);
       return { success: true };
     }),
+  }),
+
+  // ============ ZİYARETÇİ SAYACI ============
+  stats: router({
+    track: publicProcedure
+      .input(z.object({ newVisitor: z.boolean() }))
+      .mutation(async ({ input, ctx }) => {
+        const ua = String(ctx.req.headers?.["user-agent"] ?? "");
+        if (!ua || BOT_UA.test(ua)) return { counted: false };
+        try {
+          await recordVisit(input.newVisitor);
+          return { counted: true };
+        } catch (error) {
+          console.error("[Stats] Ziyaret kaydedilemedi:", error);
+          return { counted: false };
+        }
+      }),
+    summary: publicProcedure.query(async () => {
+      return getVisitSummary();
+    }),
+    recent: adminProcedure
+      .input(z.object({ days: z.number().int().min(1).max(365) }).optional())
+      .query(async ({ input }) => {
+        return getRecentVisitStats(input?.days ?? 30);
+      }),
   }),
 
   // ============ SUPERBOX ROUTES ============
