@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Shield, Award, Users, Headphones, CheckCircle, Target } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BannerImage, { StorePlaceholder } from "@/components/BannerImage";
 
 const STORE_IMG = "https://private-us-east-1.manuscdn.com/sessionFile/tQpG3h77LNb9xnBdLSPrmV/sandbox/fmmkiuE8pWZTDTPaZGMZLX-img-5_1771431363000_na1fn_c3RvcmUtZnJvbnQ.jpg?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdFFwRzNoNzdMTmI5eG5CZExTUHJtVi9zYW5kYm94L2ZtbWtpdUU4cFdaVERUUGFaR01aTFgtaW1nLTVfMTc3MTQzMTM2MzAwMF9uYTFmbl9jM1J2Y21VdFpuSnZiblEuanBnP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTkyMCxoXzE5MjAvZm9ybWF0LHdlYnAvcXVhbGl0eSxxXzgwIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=PuPJsSOEHlIvYhFWZSvel~Z0fIBo21qXN0EDJDnOSQ4vqG4Ckdn-RZ4OdI1EhZkskqB3n4IfDmGGZJ-NEGtBkZUh7G0UMz5d5Vubz5aOpHOWdlxyfLnLydF9c9rwVNvxT3hgigA~xcyO6gW2klhgrHSZXx8B2XbSSgVcTCdknJI9BrYsvsiUmIikb6lEYlWzGqUP4CX0VL6SWhLBykKNuzJdWn8uXM1TY~guXMKG0oEBDeW4Gpl0GLjrQt6cHNepayukRg1~8J7MjOPp59ThDaZysMgVYHktCB1un4pIJC5yR6TWSVYl2Ne1UILt-28zt7Fyps1mKsvOB1TNzlbkZA__";
 
@@ -27,8 +28,8 @@ export default function Hakkimizda() {
       <Navbar />
 
       {/* Page Header */}
-      <section className="relative h-48 lg:h-56 overflow-hidden">
-        <img src={HERO_IMG} alt="" className="w-full h-full object-cover" />
+      <section className="relative h-48 lg:h-56 overflow-hidden bg-[#004899]">
+        <BannerImage src={HERO_IMG} alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#004899]/90 to-[#004899]/60" />
         <div className="absolute inset-0 flex items-center">
           <div className="container">
@@ -64,10 +65,11 @@ export default function Hakkimizda() {
               </p>
             </motion.div>
             <motion.div variants={fadeInUp} className="relative">
-              <img
+              <BannerImage
                 src={STORE_IMG}
                 alt="Göksoylar İletişim Mağaza"
                 className="rounded-2xl shadow-xl w-full h-80 lg:h-[420px] object-cover"
+                fallback={<StorePlaceholder className="rounded-2xl shadow-xl w-full h-80 lg:h-[420px]" />}
               />
               <div className="absolute -bottom-5 -right-5 bg-[#004899] text-white rounded-2xl p-6 shadow-xl hidden lg:block">
                 <p className="text-3xl font-extrabold font-[Poppins] text-[#FFD200]">10+</p>

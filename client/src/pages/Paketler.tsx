@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Globe, Signal, MessageSquare, Check, Sparkles, MessageCircle } from "lucide-react";
 import { turkcellPackages as staticPackages } from "@/lib/data";
 import { trpc } from "@/lib/trpc";
+import BannerImage from "@/components/BannerImage";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -35,8 +36,8 @@ export default function Paketler() {
       <Navbar />
 
       {/* Page Header */}
-      <section className="relative h-48 lg:h-56 overflow-hidden">
-        <img src={WAVE_IMG} alt="" className="w-full h-full object-cover" />
+      <section className="relative h-48 lg:h-56 overflow-hidden bg-[#004899]">
+        <BannerImage src={WAVE_IMG} alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#004899]/85 to-[#004899]/50" />
         <div className="absolute inset-0 flex items-center">
           <div className="container">
