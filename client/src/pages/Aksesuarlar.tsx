@@ -7,6 +7,7 @@ import { accessories as staticAccessories, formatPrice } from "@/lib/data";
 import { trpc } from "@/lib/trpc";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BannerImage from "@/components/BannerImage";
 
 const ACCESSORIES_IMG = "https://private-us-east-1.manuscdn.com/sessionFile/tQpG3h77LNb9xnBdLSPrmV/sandbox/fmmkiuE8pWZTDTPaZGMZLX-img-4_1771431374000_na1fn_YWNjZXNzb3JpZXMtYmFubmVy.jpg?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdFFwRzNoNzdMTmI5eG5CZExTUHJtVi9zYW5kYm94L2ZtbWtpdUU4cFdaVERUUGFaR01aTFgtaW1nLTRfMTc3MTQzMTM3NDAwMF9uYTFmbl9ZV05qWlhOemIzSnBaWE10WW1GdWJtVnkuanBnP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTkyMCxoXzE5MjAvZm9ybWF0LHdlYnAvcXVhbGl0eSxxXzgwIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=OoLyDYsu8vTerngtk6TW45JN-K0ZTyERCiAUSK3XuoajpzddA6JbjXLX2CvwSuKUPZMTvvWE3TgLJN7JCEOkZhSQoD~yf0h0XG6doTsnjRwFbKhvmYGpSLRw0GKZ5cwwkiAaDjp~qqB7OJ53sph88LdUFqDq7I3XEolcYLuFE9Qprp0wW-O1~aqbyha~fpWEylAWjjPV3sR2KksVF--Nh8sLlnLvCiyXdZ9GWO3ohsWg6pGxcf0b5Q4hwnk0sE0UTctHwBPoPTO20--k2TGU1YbbOKlGBkAq9qc7nYFFlVNFhvY6btisd1z28MjcpAoEPvv5b-TQEVJXEpPsEHmoTA__";
 
@@ -19,8 +20,8 @@ export default function Aksesuarlar() {
       <Navbar />
 
       {/* Page Header */}
-      <section className="relative h-48 lg:h-56 overflow-hidden">
-        <img src={ACCESSORIES_IMG} alt="" className="w-full h-full object-cover" />
+      <section className="relative h-48 lg:h-56 overflow-hidden bg-[#004899]">
+        <BannerImage src={ACCESSORIES_IMG} alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#004899]/85 to-[#004899]/50" />
         <div className="absolute inset-0 flex items-center">
           <div className="container">

@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BannerImage from "@/components/BannerImage";
 
 const SUPERBOX_BANNER = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663187992687/jsBOdYhjHOlPWORa.png";
 
@@ -322,7 +323,7 @@ export default function Superbox() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="relative hidden lg:block"
             >
-              <img
+              <BannerImage
                 src={SUPERBOX_BANNER}
                 alt="Turkcell Superbox Taşınabilir Ev İnterneti"
                 className="w-full max-w-md mx-auto rounded-2xl shadow-2xl"

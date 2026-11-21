@@ -15,6 +15,7 @@ import { trpc } from "@/lib/trpc";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FaqSection from "@/components/FaqSection";
+import BannerImage, { StorePlaceholder } from "@/components/BannerImage";
 
 const HERO_IMG = "https://private-us-east-1.manuscdn.com/sessionFile/tQpG3h77LNb9xnBdLSPrmV/sandbox/fmmkiuE8pWZTDTPaZGMZLX-img-1_1771431375000_na1fn_aGVyby1iYW5uZXI.jpg?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdFFwRzNoNzdMTmI5eG5CZExTUHJtVi9zYW5kYm94L2ZtbWtpdUU4cFdaVERUUGFaR01aTFgtaW1nLTFfMTc3MTQzMTM3NTAwMF9uYTFmbl9hR1Z5YnkxaVlXNXVaWEkuanBnP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTkyMCxoXzE5MjAvZm9ybWF0LHdlYnAvcXVhbGl0eSxxXzgwIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=TG1VDMJ4j2IUlIEKeffMA7Vbnlc5uOSFmDWNOUe3aDk4yfzEzmdYoZ~fQDG0aTO2rUViDYmzxCAxGCHbcgw4uhXLjiS34QpDSeu7MEvMN0Q67mVZCKKkxI1dyzxz7-DO7G~SyrBzdXKCsiKX~r3o8OvzFEQHTbhchmlHLpTHgPbeYfn6BmKY7R2tGGUlOW5qJ9lF2DXW~8ItDRIASNwhLBlyIHRPVdOTtYEGx9gNWzdDq-wwdyS7vK059XeuH-4tHub7qpeyRZCJ9hzjwNdh-TVuR0HbfChzWXkxNS~TNK4z0q9RCyndAuL0wcTU1~1mCxqAz2InZduflWjF0pMrKQ__";
 
@@ -53,9 +54,9 @@ export default function Home() {
       <Navbar />
 
       {/* ===== HERO SECTION ===== */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden bg-[#004899]">
         <div className="absolute inset-0">
-          <img
+          <BannerImage
             src={HERO_IMG}
             alt="Göksoylar İletişim - Türkcell Yetkili Bayi Mağazası"
             className="w-full h-full object-cover"
@@ -245,8 +246,8 @@ export default function Home() {
             viewport={{ once: true, margin: "-50px" }}
             variants={staggerContainer}
           >
-            <motion.div variants={fadeInUp} className="relative rounded-2xl overflow-hidden mb-12">
-              <img src={ACCESSORIES_IMG} alt="Aksesuarlar" loading="lazy" decoding="async" className="w-full h-64 lg:h-80 object-cover" />
+            <motion.div variants={fadeInUp} className="relative rounded-2xl overflow-hidden mb-12 bg-[#004899] min-h-64 lg:min-h-80">
+              <BannerImage src={ACCESSORIES_IMG} alt="Aksesuarlar" loading="lazy" decoding="async" className="w-full h-64 lg:h-80 object-cover" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#004899]/85 to-[#004899]/40 flex items-center">
                 <div className="container">
                   <div className="max-w-lg">
@@ -327,12 +328,13 @@ export default function Home() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="relative"
               >
-                <img
+                <BannerImage
                   src={STORE_IMG}
                   loading="lazy"
                   decoding="async"
                   alt="Göksoylar İletişim Mağaza"
                   className="rounded-2xl shadow-2xl w-full h-80 lg:h-96 object-cover"
+                  fallback={<StorePlaceholder className="rounded-2xl shadow-2xl w-full h-80 lg:h-96" />}
                 />
                 <div className="absolute -bottom-4 -left-4 bg-[#FFD200] text-[#004899] rounded-xl px-5 py-3 shadow-lg">
                   <p className="font-bold font-[Poppins] text-lg">Türkcell</p>

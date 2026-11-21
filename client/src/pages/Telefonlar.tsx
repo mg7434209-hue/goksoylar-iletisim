@@ -9,6 +9,7 @@ import { phones as staticPhones, phoneBrands as staticBrands, formatPrice } from
 import { trpc } from "@/lib/trpc";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BannerImage from "@/components/BannerImage";
 
 const PHONES_IMG = "https://private-us-east-1.manuscdn.com/sessionFile/tQpG3h77LNb9xnBdLSPrmV/sandbox/fmmkiuE8pWZTDTPaZGMZLX-img-2_1771431362000_na1fn_cGhvbmVzLXNob3djYXNl.jpg?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdFFwRzNoNzdMTmI5eG5CZExTUHJtVi9zYW5kYm94L2ZtbWtpdUU4cFdaVERUUGFaR01aTFgtaW1nLTJfMTc3MTQzMTM2MjAwMF9uYTFmbl9jR2h2Ym1WekxYTm9iM2RqWVhObC5qcGc~eC1vc3MtcHJvY2Vzcz1pbWFnZS9yZXNpemUsd18xOTIwLGhfMTkyMC9mb3JtYXQsd2VicC9xdWFsaXR5LHFfODAiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=mFOlkEzLwpFozxTfzQQSeh4dUu5M6D2gkYv8n9VrxWufb6RAFKVQQ79zWb0AYwG2ebrVp2OTn~Pz3Lez--83BnI297OW9pvdt8vHwFN0AkSh5zG84fJJwHNg908lECmgbTNQFAWqlPBUmIstK9YVqnYyAnc2MSvW32gJG~jAjeGlFmcMIhFjmx6f~ZZDXdhq2-qlKaM5h9LbgTxX2XTd1aBnqPMLd9AegJPUnBNqMyK-r~KzoUkzsIf6cQnJfmAsBSikyJmbVfYMxQBSprpo46ijJkO9KrZZRkXmgj3R2Ycsnf7J-CUNbGLMbl61aCfTsHW-y0E4Ry3AX5W~C3t3sw__";
 
@@ -34,8 +35,8 @@ export default function Telefonlar() {
       <Navbar />
 
       {/* Page Header */}
-      <section className="relative h-48 lg:h-56 overflow-hidden">
-        <img src={PHONES_IMG} alt="" className="w-full h-full object-cover" />
+      <section className="relative h-48 lg:h-56 overflow-hidden bg-[#004899]">
+        <BannerImage src={PHONES_IMG} alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#004899]/90 to-[#004899]/60" />
         <div className="absolute inset-0 flex items-center">
           <div className="container">
