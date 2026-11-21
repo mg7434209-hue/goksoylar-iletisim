@@ -1,4 +1,4 @@
-CREATE TABLE `accessories` (
+CREATE TABLE IF NOT EXISTS `accessories` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`slug` varchar(128) NOT NULL,
 	`name` varchar(256) NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE `accessories` (
 	CONSTRAINT `accessories_slug_unique` UNIQUE(`slug`)
 );
 --> statement-breakpoint
-CREATE TABLE `packages` (
+CREATE TABLE IF NOT EXISTS `packages` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`slug` varchar(128) NOT NULL,
 	`name` varchar(256) NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE `packages` (
 	CONSTRAINT `packages_slug_unique` UNIQUE(`slug`)
 );
 --> statement-breakpoint
-CREATE TABLE `phones` (
+CREATE TABLE IF NOT EXISTS `phones` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`slug` varchar(128) NOT NULL,
 	`name` varchar(256) NOT NULL,

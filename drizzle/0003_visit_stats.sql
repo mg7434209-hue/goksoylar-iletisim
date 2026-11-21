@@ -1,4 +1,4 @@
-CREATE TABLE `visit_stats` (
+CREATE TABLE IF NOT EXISTS `visit_stats` (
 	`day` varchar(10) NOT NULL,
 	`pageViews` int NOT NULL DEFAULT 0,
 	`visitors` int NOT NULL DEFAULT 0,

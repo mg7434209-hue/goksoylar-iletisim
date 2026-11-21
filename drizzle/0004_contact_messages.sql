@@ -1,4 +1,4 @@
-CREATE TABLE `contact_messages` (
+CREATE TABLE IF NOT EXISTS `contact_messages` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`name` varchar(128) NOT NULL,
 	`phone` varchar(32) NOT NULL,
