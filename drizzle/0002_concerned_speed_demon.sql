@@ -1,4 +1,4 @@
-CREATE TABLE `superbox` (
+CREATE TABLE IF NOT EXISTS `superbox` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`slug` varchar(128) NOT NULL,
 	`name` varchar(256) NOT NULL,
