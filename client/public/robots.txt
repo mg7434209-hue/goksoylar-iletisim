@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /api/
 
-Sitemap: https://goksoylar.com.tr/sitemap.xml
+Sitemap: https://www.goksoylar.com.tr/sitemap.xml

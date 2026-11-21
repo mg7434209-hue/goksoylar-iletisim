@@ -6,7 +6,7 @@
 import { FAQ_ITEMS } from "./faq";
 
 export const SITE = {
-  url: "https://goksoylar.com.tr",
+  url: "https://www.goksoylar.com.tr",
   name: "Göksoylar İletişim",
   locale: "tr_TR",
   phone: "+905349777000",
