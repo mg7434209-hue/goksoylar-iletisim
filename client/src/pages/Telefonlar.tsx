@@ -99,6 +99,8 @@ export default function Telefonlar() {
                     <div className="aspect-[4/5] bg-gray-50 rounded-xl overflow-hidden">
                       <img
                         src={phone.image}
+                        loading="lazy"
+                        decoding="async"
                         alt={phone.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />

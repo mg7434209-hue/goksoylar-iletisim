@@ -45,6 +45,8 @@ export default function Aksesuarlar() {
                   <div className="aspect-square bg-gray-50 overflow-hidden">
                     <img
                       src={acc.image}
+                      loading="lazy"
+                      decoding="async"
                       alt={acc.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />

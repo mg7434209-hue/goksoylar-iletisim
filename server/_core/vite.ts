@@ -5,6 +5,12 @@ import { nanoid } from "nanoid";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config";
+import { injectSeo } from "./seoHtml";
+
+/** İstek yolunu sorgu dizesi olmadan döndürür. */
+function requestPath(originalUrl: string): string {
+  return originalUrl.split(/[?#]/)[0] || "/";
+}
 
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
@@ -38,8 +44,9 @@ export async function setupVite(app: Express, server: Server) {
         `src="/src/main.tsx"`,
         `src="/src/main.tsx?v=${nanoid()}"`
       );
-      const page = await vite.transformIndexHtml(url, template);
-      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+      const transformed = await vite.transformIndexHtml(url, template);
+      const { html, status } = injectSeo(transformed, requestPath(url));
+      res.status(status).set({ "Content-Type": "text/html" }).end(html);
     } catch (e) {
       vite.ssrFixStacktrace(e as Error);
       next(e);
@@ -58,10 +65,27 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  // index:false → "/" isteği de aşağıdaki SEO enjeksiyonlu işleyiciden geçer;
+  // aksi halde express.static ham index.html'i doğrudan servis eder.
+  app.use(express.static(distPath, { index: false }));
 
-  // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  // Dosya yoksa SPA'nın index.html'ine düş; ancak her sayfa kendi title/meta/
+  // JSON-LD'si ile gelir ve bilinmeyen yollar gerçek 404 döner (soft-404 yok).
+  const indexPath = path.resolve(distPath, "index.html");
+  let indexHtml: string | null = null;
+  app.use("*", (req, res, next) => {
+    try {
+      indexHtml ??= fs.readFileSync(indexPath, "utf-8");
+      const { html, status } = injectSeo(
+        indexHtml,
+        requestPath(req.originalUrl)
+      );
+      res
+        .status(status)
+        .set({ "Content-Type": "text/html; charset=utf-8" })
+        .end(html);
+    } catch (error) {
+      next(error);
+    }
   });
 }

@@ -4,6 +4,8 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import VisitTracker from "./components/VisitTracker";
+import RouteMeta from "./components/RouteMeta";
+import MobileActionBar from "./components/MobileActionBar";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Telefonlar from "./pages/Telefonlar";
@@ -61,7 +63,9 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <VisitTracker />
+          <RouteMeta />
           <Router />
+          <MobileActionBar />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
