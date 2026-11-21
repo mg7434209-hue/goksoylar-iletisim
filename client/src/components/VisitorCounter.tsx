@@ -15,7 +15,11 @@ export default function VisitorCounter() {
   if (!data || data.totalVisitors === 0) return null;
 
   return (
-    <div className="flex items-center gap-4 text-gray-400 text-sm" aria-label="Ziyaretçi sayacı">
+    <div
+      role="group"
+      className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-gray-400 text-sm"
+      aria-label="Ziyaretçi sayacı"
+    >
       <span className="inline-flex items-center gap-1.5">
         <Eye className="w-4 h-4 text-[#FFD200]" />
         Bugün: <strong className="text-white font-semibold">{fmt(data.todayVisitors)}</strong>

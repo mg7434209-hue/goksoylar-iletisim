@@ -115,7 +115,7 @@ export default function Footer() {
               &copy; 2026 Göksoylar İletişim. Tüm hakları saklıdır.
             </p>
             <VisitorCounter />
-            <div className="flex items-center gap-6 text-gray-500 text-sm">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-gray-500 text-sm">
               <span>Gizlilik Politikası</span>
               <span>Kullanım Koşulları</span>
               <span>KVKK</span>

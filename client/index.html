@@ -3,21 +3,40 @@
 
   <head>
     <meta charset="UTF-8" />
+    <!-- maximum-scale=1 kaldırıldı: yakınlaştırmayı engellemek erişilebilirlik ve mobil SEO için kötü -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#004899" />
+    <!-- Varsayılan başlık/açıklama; sunucu bunları sayfaya özel olanlarla değiştirir (server/_core/seoHtml.ts) -->
     <title>Göksoylar İletişim - Türkcell Yetkili Bayi</title>
     <meta name="description" content="Göksoylar İletişim - Türkcell Yetkili Bayisi. En güncel cep telefonları, Türkcell paketleri, aksesuarlar ve taksit imkanı ile hizmetinizdeyiz." />
+    <!--seo:head-->
     <meta name="google-site-verification" content="Nrm9Z0_vvojzQAVd28pL1xUvr_pXW749pU82eVLL4Zo" />
-    <meta name="keywords" content="Göksoylar İletişim, Türkcell bayi, cep telefonu, Türkcell paketler, aksesuarlar, iPhone, Samsung, Xiaomi" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23004899'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='%23FFD200' font-size='18' font-weight='bold' font-family='sans-serif'%3EG%3C/text%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://private-us-east-1.manuscdn.com" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
 
   <body>
     <div id="root"></div>
+    <!-- JavaScript çalıştırmayan tarayıcılar ve botlar için temel işletme bilgisi -->
+    <noscript>
+      <h1>Göksoylar İletişim - Manavgat Türkcell Yetkili Bayi</h1>
+      <p>Cep telefonları, Türkcell paketleri, Superbox ve telefon aksesuarları. 12 aya varan taksit ve ücretsiz kargo.</p>
+      <p>Adres: Aşağı Pazarcı, Zübeyde Hanım Cd. No:44, Manavgat / Antalya. Çalışma saatleri: Pzt - Cmt 09:00 - 20:00 (Pazar kapalı).</p>
+      <p>Telefon: <a href="tel:+905349777000">0534 977 70 00</a> | E-posta: <a href="mailto:info@goksoylar.com">info@goksoylar.com</a></p>
+      <nav>
+        <a href="/telefonlar">Cep Telefonları</a> |
+        <a href="/paketler">Türkcell Paketler</a> |
+        <a href="/superbox">Superbox</a> |
+        <a href="/aksesuarlar">Aksesuarlar</a> |
+        <a href="/hakkimizda">Hakkımızda</a> |
+        <a href="/iletisim">İletişim</a>
+      </nav>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
     <script
       defer

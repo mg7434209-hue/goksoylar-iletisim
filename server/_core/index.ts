@@ -14,6 +14,7 @@ import { SignJWT, jwtVerify } from "jose";
 import { ENV } from "./env";
 import { ADMIN_COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./cookies";
+import { buildSitemapXml } from "./sitemap";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -108,18 +109,12 @@ async function startServer() {
     return res.json({ success: true });
   });
   // ============ STATIC SEO FILES ============
+  // Sitemap rota tablosundan (shared/seo.ts) üretilir; yeni sayfa eklenince
+  // elle güncelleme gerekmez. lastmod bilinçli olarak yok: tarayıcılar yalnızca
+  // gerçekten doğru tarihleri dikkate alır.
   app.get("/sitemap.xml", (_req, res) => {
-    const sitemapPath = path.resolve(import.meta.dirname, "../../client/public/sitemap.xml");
-    const distSitemapPath = process.env.NODE_ENV === "production"
-      ? path.resolve(import.meta.dirname, "public/sitemap.xml")
-      : sitemapPath;
-    const filePath = fs.existsSync(distSitemapPath) ? distSitemapPath : sitemapPath;
-    if (fs.existsSync(filePath)) {
-      res.set("Content-Type", "application/xml; charset=utf-8");
-      res.send(fs.readFileSync(filePath, "utf-8"));
-    } else {
-      res.status(404).send("Sitemap not found");
-    }
+    res.set("Content-Type", "application/xml; charset=utf-8");
+    res.send(buildSitemapXml());
   });
 
   app.get("/robots.txt", (_req, res) => {
