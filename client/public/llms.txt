@@ -12,13 +12,13 @@
 
 ## Sayfalar
 
-- [Ana sayfa](https://goksoylar.com.tr/): Genel bakış, öne çıkan ürünler, sık sorulan sorular
-- [Cep Telefonları](https://goksoylar.com.tr/telefonlar): Güncel telefon modelleri ve taksit seçenekleri
-- [Türkcell Paketler](https://goksoylar.com.tr/paketler): Faturalı ve genç paketler
-- [Superbox](https://goksoylar.com.tr/superbox): Fiber altyapı gerektirmeyen, tek prizle çalışan taşınabilir ev interneti; 12 ay sabit fiyat
-- [Aksesuarlar](https://goksoylar.com.tr/aksesuarlar): Telefon aksesuarları
-- [Hakkımızda](https://goksoylar.com.tr/hakkimizda): Şirket hakkında
-- [İletişim](https://goksoylar.com.tr/iletisim): Adres, harita ve iletişim formu
+- [Ana sayfa](https://www.goksoylar.com.tr/): Genel bakış, öne çıkan ürünler, sık sorulan sorular
+- [Cep Telefonları](https://www.goksoylar.com.tr/telefonlar): Güncel telefon modelleri ve taksit seçenekleri
+- [Türkcell Paketler](https://www.goksoylar.com.tr/paketler): Faturalı ve genç paketler
+- [Superbox](https://www.goksoylar.com.tr/superbox): Fiber altyapı gerektirmeyen, tek prizle çalışan taşınabilir ev interneti; 12 ay sabit fiyat
+- [Aksesuarlar](https://www.goksoylar.com.tr/aksesuarlar): Telefon aksesuarları
+- [Hakkımızda](https://www.goksoylar.com.tr/hakkimizda): Şirket hakkında
+- [İletişim](https://www.goksoylar.com.tr/iletisim): Adres, harita ve iletişim formu
 
 ## Notlar
 

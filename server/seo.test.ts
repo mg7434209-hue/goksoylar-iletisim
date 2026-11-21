@@ -22,7 +22,7 @@ describe("rota çözümleme", () => {
       const seo = resolveSeo(route.path);
       expect(seo.status).toBe(200);
       expect(seo.indexable).toBe(true);
-      expect(seo.canonical).toMatch(/^https:\/\/goksoylar\.com\.tr/);
+      expect(seo.canonical).toMatch(/^https:\/\/www\.goksoylar\.com\.tr/);
     }
   });
 
@@ -31,7 +31,7 @@ describe("rota çözümleme", () => {
     expect(normalizePath("/paketler?utm_source=x#a")).toBe("/paketler");
     expect(normalizePath("")).toBe("/");
     expect(resolveSeo("/superbox/").canonical).toBe(
-      "https://goksoylar.com.tr/superbox"
+      "https://www.goksoylar.com.tr/superbox"
     );
   });
 
@@ -113,7 +113,7 @@ describe("JSON-LD", () => {
     ) as any;
     expect(crumb.itemListElement).toHaveLength(2);
     expect(crumb.itemListElement[1].item).toBe(
-      "https://goksoylar.com.tr/iletisim"
+      "https://www.goksoylar.com.tr/iletisim"
     );
   });
 
@@ -132,10 +132,10 @@ describe("HTML enjeksiyonu", () => {
     expect(html).not.toContain("varsayılan açıklama");
     expect(html.match(/<title>/g)).toHaveLength(1);
     expect(html).toContain(
-      `<link rel="canonical" href="https://goksoylar.com.tr/telefonlar" />`
+      `<link rel="canonical" href="https://www.goksoylar.com.tr/telefonlar" />`
     );
     expect(html).toContain(
-      `property="og:url" content="https://goksoylar.com.tr/telefonlar"`
+      `property="og:url" content="https://www.goksoylar.com.tr/telefonlar"`
     );
     expect(html).toContain(`name="twitter:card" content="summary_large_image"`);
     expect(html).toContain(`type="application/ld+json"`);
@@ -178,8 +178,8 @@ describe("sitemap", () => {
     for (const r of PUBLIC_ROUTES) {
       expect(xml).toContain(
         r.path === "/"
-          ? "https://goksoylar.com.tr/<"
-          : `https://goksoylar.com.tr${r.path}<`
+          ? "https://www.goksoylar.com.tr/<"
+          : `https://www.goksoylar.com.tr${r.path}<`
       );
     }
     expect(xml).not.toContain("/admin");
